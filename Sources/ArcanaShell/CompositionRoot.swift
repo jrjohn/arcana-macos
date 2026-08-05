@@ -37,7 +37,7 @@ public enum CompositionRoot {
         factory.register("CustomerListPage") { AnyView(CustomersView()) }
         factory.register("ProductListPage") { AnyView(ProductsView()) }
         factory.register("OrderListPage") { AnyView(OrdersView()) }
-        factory.register("ReportsPage") { AnyView(SimpleListPlaceholder(title: "Reports", systemImage: "chart.bar")) }
+        factory.register("ReportsPage") { AnyView(ReportsView()) }
         factory.register("PluginManagerPage") { AnyView(PluginManagerView(manager: manager)) }
         factory.register("UsersPage") { AnyView(UsersView()) }
         factory.register("SyncPage") { AnyView(SyncView()) }

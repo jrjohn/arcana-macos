@@ -139,17 +139,35 @@ Every feature area of the Windows app, with its macOS port status.
 
 ## Rough completeness
 
+_Updated after implementing checklist items #1–#5 (Orders master-detail, Customer/Product editors,
+login + RBAC UI, ArcanaSync wiring, Reports + pop-out)._
+
 | Area | Status |
 |---|---|
 | Architecture / layers | ~95% (foundation solid) |
-| CRDT engine (library) | ~90% built · **0% wired into app** |
+| CRDT engine (library) | ~90% built · **now wired into the app** (local-node sync running; no remote peer) |
 | Plugin system (core) | ~80% built · management/dynamic/enforcement missing |
-| Desktop shell chrome | ~70% (no MDI / pop-out / multi-window) |
-| **Feature UI (Customer/Product/Order/Reports)** | **~5%** (only a basic Customers list) |
-| Identity/RBAC/Auth backend | ~85% · **UI 0%** |
-| Cross-cutting UI services | ~10% |
+| Desktop shell chrome | ~75% (multi-window/pop-out ✅; MDI nested tabs still missing) |
+| **Feature UI (Customer/Product/Order/Reports)** | **~70%** — real master-detail editors + a Reports dashboard; missing category mgmt, some workflows |
+| Identity/RBAC/Auth | backend ~90% · **UI now real** (login gate + Users/Roles admin + permission gating) |
+| Cross-cutting UI services | ~15% (dialogs/file-pickers/notifications still missing) |
 | Packaging / signing | ~15% |
 
-**One line:** the skeleton and all backend layers are here and tested; the **operable feature
-screens** (Orders master-detail, product/customer editors, login + RBAC admin, live sync) are
-the large remaining body of work.
+### Done in the #1–#5 pass
+- ✅ **Orders master-detail** — live list + editable detail (customer/status/payment, add/remove
+  line items, live totals) + **pop-out order windows**
+- ✅ **Customer / Product editors** — searchable master-detail with full field editing, margin +
+  low-stock indicators
+- ✅ **Login + RBAC UI** — `LoginView` gates the app, cohesive `AuthService` (verify → resolve
+  permissions → session + audit), Users/Roles admin, permission-gated admin sidebar, Sign Out
+- ✅ **ArcanaSync wired** — `SyncEngine` advances real vector clocks + drains the pending queue,
+  conflict-resolution demo (still local-only: no remote transport)
+- ✅ **Reports** — a dashboard computed from live data (totals, revenue, orders-by-status chart,
+  low stock)
+
+### Still open (largest remaining)
+- ❌ Remote sync transport (multi-node) · ❌ MDI nested module tabs
+- ❌ Product category management, per-module workflow polish
+- ❌ Cross-cutting UI services (dialogs, file pickers, notifications, keyboard shortcuts)
+- ❌ Plugin management UI / dynamic loading · ❌ Auth: lockout / refresh / MFA / external providers
+- ❌ Xcode project + code-signing / notarization

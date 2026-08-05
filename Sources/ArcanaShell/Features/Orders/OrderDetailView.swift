@@ -10,6 +10,7 @@ import ArcanaModel
 
 struct OrderDetailView: View {
     @Environment(\.modelContext) private var context
+    @Environment(\.openWindow) private var openWindow
     @Bindable var order: Order
 
     @Query(filter: #Predicate<Customer> { !$0.isSoftDeleted }, sort: \Customer.code)
@@ -78,6 +79,13 @@ struct OrderDetailView: View {
         }
         .formStyle(.grouped)
         .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    openWindow(id: "order", value: order.persistentModelID)
+                } label: {
+                    Label("Open in Window", systemImage: "macwindow.badge.plus")
+                }
+            }
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     save()

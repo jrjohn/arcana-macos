@@ -36,6 +36,12 @@ public struct ArcanaShellApp: App {
             ShellCommands(shell: shell)
         }
 
+        // Popped-out order documents (tear-off windows).
+        WindowGroup("Order", id: "order", for: PersistentIdentifier.self) { $orderID in
+            OrderWindowView(orderID: orderID)
+        }
+        .modelContainer(shell.modelContainer)
+
         Settings {
             ShellSettingsView(theme: theme, localization: localization)
         }

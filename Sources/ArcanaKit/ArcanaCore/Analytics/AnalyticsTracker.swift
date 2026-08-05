@@ -9,17 +9,20 @@ import Foundation
 
 /// Protocol for analytics tracking
 protocol AnalyticsTracker: AnyObject, Sendable {
-    /// Track an event with optional parameters
-    func trackEvent(_ event: AnalyticsEvent, params: [String: Any])
-    
+    /// Track an event with optional parameters.
+    /// Values are `any Sendable` so the params can be captured into the tracker's
+    /// `@MainActor` persistence task under Swift 6 strict concurrency (Int/String/Bool
+    /// literals already conform, so call sites are unchanged).
+    func trackEvent(_ event: AnalyticsEvent, params: [String: any Sendable])
+
     /// Track a screen view
-    func trackScreen(_ screen: String, params: [String: Any])
-    
+    func trackScreen(_ screen: String, params: [String: any Sendable])
+
     /// Track an error
-    func trackError(_ error: Error, context: [String: Any])
-    
+    func trackError(_ error: Error, context: [String: any Sendable])
+
     /// Track an AppError with error codes
-    func trackAppError(_ appError: AppError, context: [String: Any])
+    func trackAppError(_ appError: AppError, context: [String: any Sendable])
     
     /// Get current session ID
     var sessionId: String { get }

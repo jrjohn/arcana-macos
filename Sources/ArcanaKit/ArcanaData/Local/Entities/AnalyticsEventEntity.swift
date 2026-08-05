@@ -53,7 +53,7 @@ final class AnalyticsEventEntity {
     static func from(
         event: AnalyticsEvent,
         sessionId: String,
-        params: [String: Any]
+        params: [String: any Sendable]
     ) -> AnalyticsEventEntity {
         // Convert params to string dictionary and JSON
         let stringParams = params.mapValues { String(describing: $0) }
@@ -76,7 +76,7 @@ final class AnalyticsEventEntity {
     static func fromError(
         error: AppError,
         sessionId: String,
-        context: [String: Any]
+        context: [String: any Sendable]
     ) -> AnalyticsEventEntity {
         var params = context.mapValues { String(describing: $0) }
         

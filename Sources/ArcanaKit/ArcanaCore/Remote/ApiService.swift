@@ -42,21 +42,49 @@ actor ApiService {
         )
     }
     
+    // MARK: - Request Parameters
+
+    // Typed, `Sendable` request parameters. Under Swift 6 strict concurrency the actor
+    // can't hand a `[String: Any]` dictionary to Alamofire (its `Any` values aren't
+    // `Sendable`), so each request body/query is an `Encodable & Sendable` struct fed to
+    // the `Encodable`-based `request(_:parameters:encoder:)` overload.
+
+    private struct UsersQuery: Encodable, Sendable {
+        let page: Int
+        let perPage: Int
+        enum CodingKeys: String, CodingKey { case page; case perPage = "per_page" }
+    }
+
+    private struct UserPayload: Encodable, Sendable {
+        let email: String
+        let firstName: String
+        let lastName: String
+        enum CodingKeys: String, CodingKey {
+            case email; case firstName = "first_name"; case lastName = "last_name"
+        }
+    }
+
+    private struct UserPatchPayload: Encodable, Sendable {
+        let email: String?
+        let firstName: String?
+        let lastName: String?
+        enum CodingKeys: String, CodingKey {
+            case email; case firstName = "first_name"; case lastName = "last_name"
+        }
+    }
+
     // MARK: - Users API
-    
+
     /// Get users list with pagination
     /// GET /api/users?page={page}
     func getUsers(page: Int = 1, perPage: Int? = nil) async throws -> UsersListResponse {
         let endpoint = "\(baseURL)\(config.usersEndpoint)"
-        let parameters: [String: Any] = [
-            "page": page,
-            "per_page": perPage ?? config.defaultPageSize
-        ]
-        
+        let query = UsersQuery(page: page, perPage: perPage ?? config.defaultPageSize)
+
         return try await session.request(
             endpoint,
             method: .get,
-            parameters: parameters
+            parameters: query
         )
         .validate()
         .serializingDecodable(UsersListResponse.self)
@@ -81,17 +109,13 @@ actor ApiService {
     /// POST /api/users
     func createUser(email: String, firstName: String, lastName: String) async throws -> CreateUserResponse {
         let endpoint = "\(baseURL)/users"
-        let parameters: [String: Any] = [
-            "email": email,
-            "first_name": firstName,
-            "last_name": lastName
-        ]
-        
+        let payload = UserPayload(email: email, firstName: firstName, lastName: lastName)
+
         return try await session.request(
             endpoint,
             method: .post,
-            parameters: parameters,
-            encoding: JSONEncoding.default
+            parameters: payload,
+            encoder: JSONParameterEncoder.default
         )
         .validate()
         .serializingDecodable(CreateUserResponse.self)
@@ -102,17 +126,13 @@ actor ApiService {
     /// PUT /api/users/{id}
     func updateUser(id: String, email: String, firstName: String, lastName: String) async throws -> UpdateUserResponse {
         let endpoint = "\(baseURL)/users/\(id)"
-        let parameters: [String: Any] = [
-            "email": email,
-            "first_name": firstName,
-            "last_name": lastName
-        ]
-        
+        let payload = UserPayload(email: email, firstName: firstName, lastName: lastName)
+
         return try await session.request(
             endpoint,
             method: .put,
-            parameters: parameters,
-            encoding: JSONEncoding.default
+            parameters: payload,
+            encoder: JSONParameterEncoder.default
         )
         .validate()
         .serializingDecodable(UpdateUserResponse.self)
@@ -123,23 +143,15 @@ actor ApiService {
     /// PATCH /api/users/{id}
     func patchUser(id: String, email: String?, firstName: String?, lastName: String?) async throws -> UpdateUserResponse {
         let endpoint = "\(baseURL)/users/\(id)"
-        var parameters: [String: Any] = [:]
-        
-        if let email = email {
-            parameters["email"] = email
-        }
-        if let firstName = firstName {
-            parameters["first_name"] = firstName
-        }
-        if let lastName = lastName {
-            parameters["last_name"] = lastName
-        }
-        
+        // Optionals left `nil` are omitted by the synthesized encoder (encodeIfPresent),
+        // preserving the original partial-update semantics.
+        let payload = UserPatchPayload(email: email, firstName: firstName, lastName: lastName)
+
         return try await session.request(
             endpoint,
             method: .patch,
-            parameters: parameters,
-            encoding: JSONEncoding.default
+            parameters: payload,
+            encoder: JSONParameterEncoder.default
         )
         .validate()
         .serializingDecodable(UpdateUserResponse.self)

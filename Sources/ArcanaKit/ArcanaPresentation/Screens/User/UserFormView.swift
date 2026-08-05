@@ -295,8 +295,8 @@ private final class PreviewUserService: UserService, @unchecked Sendable {
 
 private final class PreviewAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
     var sessionId: String = UUID().uuidString
-    func trackEvent(_ event: AnalyticsEvent, params: [String: Any]) { }
-    func trackScreen(_ screen: String, params: [String: Any]) { }
-    func trackError(_ error: Error, context: [String: Any]) { }
-    func trackAppError(_ appError: AppError, context: [String: Any]) { }
+    func trackEvent(_ event: AnalyticsEvent, params: [String: any Sendable]) { }
+    func trackScreen(_ screen: String, params: [String: any Sendable]) { }
+    func trackError(_ error: Error, context: [String: any Sendable]) { }
+    func trackAppError(_ appError: AppError, context: [String: any Sendable]) { }
 }

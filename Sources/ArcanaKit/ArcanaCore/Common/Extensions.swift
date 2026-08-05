@@ -120,8 +120,10 @@ extension Binding {
 import Combine
 
 extension Publisher {
-    /// Async await wrapper for publishers
-    func async() async throws -> Output {
+    /// Async await wrapper for publishers.
+    /// `Output: Sendable` so the emitted value can cross the continuation's actor
+    /// boundary under Swift 6 strict concurrency.
+    func async() async throws -> Output where Output: Sendable {
         try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
             

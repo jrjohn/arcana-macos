@@ -359,19 +359,19 @@ private final class MockAnalyticsTracker: AnalyticsTracker, @unchecked Sendable 
     var sessionId: String = UUID().uuidString
     var trackedEvents: [AnalyticsEvent] = []
 
-    func trackEvent(_ event: AnalyticsEvent, params: [String: Any] = [:]) {
+    func trackEvent(_ event: AnalyticsEvent, params: [String: any Sendable] = [:]) {
         trackedEvents.append(event)
     }
 
-    func trackScreen(_ screen: String, params: [String: Any] = [:]) {
+    func trackScreen(_ screen: String, params: [String: any Sendable] = [:]) {
         // No-op for mock
     }
 
-    func trackError(_ error: Error, context: [String: Any] = [:]) {
+    func trackError(_ error: Error, context: [String: any Sendable] = [:]) {
         // No-op for mock
     }
 
-    func trackAppError(_ appError: AppError, context: [String: Any] = [:]) {
+    func trackAppError(_ appError: AppError, context: [String: any Sendable] = [:]) {
         // No-op for mock
     }
 }

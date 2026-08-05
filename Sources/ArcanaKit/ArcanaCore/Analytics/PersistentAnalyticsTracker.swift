@@ -31,7 +31,7 @@ final class PersistentAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
     
     // MARK: - AnalyticsTracker Implementation
     
-    func trackEvent(_ event: AnalyticsEvent, params: [String: Any] = [:]) {
+    func trackEvent(_ event: AnalyticsEvent, params: [String: any Sendable] = [:]) {
         Task { @MainActor in
             let entity = AnalyticsEventEntity.from(
                 event: event,
@@ -50,7 +50,7 @@ final class PersistentAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
         }
     }
     
-    func trackScreen(_ screen: String, params: [String: Any] = [:]) {
+    func trackScreen(_ screen: String, params: [String: any Sendable] = [:]) {
         var screenParams = params
         screenParams["screen_name"] = screen
         
@@ -74,12 +74,12 @@ final class PersistentAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
         trackEvent(event, params: screenParams)
     }
     
-    func trackError(_ error: Error, context: [String: Any] = [:]) {
+    func trackError(_ error: Error, context: [String: any Sendable] = [:]) {
         let appError = AppError.from(error)
         trackAppError(appError, context: context)
     }
-    
-    func trackAppError(_ appError: AppError, context: [String: Any] = [:]) {
+
+    func trackAppError(_ appError: AppError, context: [String: any Sendable] = [:]) {
         Task { @MainActor in
             let entity = AnalyticsEventEntity.fromError(
                 error: appError,
@@ -100,121 +100,88 @@ final class PersistentAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
     
     // MARK: - Query Methods
     
+    //
+    // The query helpers below touch the SwiftData `context` (a `@MainActor` property),
+    // and `AnalyticsEventEntity` is a non-Sendable `@Model`, so under Swift 6 these must
+    // stay on the main actor rather than hand results back through a continuation. They
+    // are `@MainActor async` — callers `await` them from the main actor.
+    //
+
     /// Get all analytics events
-    func getAllEvents() async throws -> [AnalyticsEventEntity] {
-        return try await withCheckedThrowingContinuation { continuation in
-            Task { @MainActor in
-                do {
-                    let descriptor = FetchDescriptor<AnalyticsEventEntity>(
-                        sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-                    )
-                    let events = try context.fetch(descriptor)
-                    continuation.resume(returning: events)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+    @MainActor
+    func getAllEvents() throws -> [AnalyticsEventEntity] {
+        let descriptor = FetchDescriptor<AnalyticsEventEntity>(
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        return try context.fetch(descriptor)
     }
-    
+
     /// Get events by category
-    func getEvents(category: String) async throws -> [AnalyticsEventEntity] {
-        return try await withCheckedThrowingContinuation { continuation in
-            Task { @MainActor in
-                do {
-                    let predicate = #Predicate<AnalyticsEventEntity> { event in
-                        event.category == category
-                    }
-                    let descriptor = FetchDescriptor<AnalyticsEventEntity>(
-                        predicate: predicate,
-                        sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-                    )
-                    let events = try context.fetch(descriptor)
-                    continuation.resume(returning: events)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
+    @MainActor
+    func getEvents(category: String) throws -> [AnalyticsEventEntity] {
+        let predicate = #Predicate<AnalyticsEventEntity> { event in
+            event.category == category
         }
+        let descriptor = FetchDescriptor<AnalyticsEventEntity>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        return try context.fetch(descriptor)
     }
-    
+
     /// Get error events
-    func getErrorEvents() async throws -> [AnalyticsEventEntity] {
-        return try await withCheckedThrowingContinuation { continuation in
-            Task { @MainActor in
-                do {
-                    let predicate = #Predicate<AnalyticsEventEntity> { event in
-                        event.eventType == "ERROR"
-                    }
-                    let descriptor = FetchDescriptor<AnalyticsEventEntity>(
-                        predicate: predicate,
-                        sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
-                    )
-                    let events = try context.fetch(descriptor)
-                    continuation.resume(returning: events)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
+    @MainActor
+    func getErrorEvents() throws -> [AnalyticsEventEntity] {
+        let predicate = #Predicate<AnalyticsEventEntity> { event in
+            event.eventType == "ERROR"
         }
+        let descriptor = FetchDescriptor<AnalyticsEventEntity>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
+        )
+        return try context.fetch(descriptor)
     }
-    
+
     /// Get events count
-    func getEventsCount() async throws -> Int {
-        return try await withCheckedThrowingContinuation { continuation in
-            Task { @MainActor in
-                do {
-                    let descriptor = FetchDescriptor<AnalyticsEventEntity>()
-                    let events = try context.fetch(descriptor)
-                    continuation.resume(returning: events.count)
-                } catch {
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
+    @MainActor
+    func getEventsCount() throws -> Int {
+        let descriptor = FetchDescriptor<AnalyticsEventEntity>()
+        return try context.fetchCount(descriptor)
     }
-    
+
     /// Clear all analytics events
-    func clearAllEvents() async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            Task { @MainActor in
-                do {
-                    try context.delete(model: AnalyticsEventEntity.self)
-                    try context.save()
-                    logger.info("📊 All analytics events cleared")
-                    continuation.resume()
-                } catch {
-                    logger.error("❌ Failed to clear analytics events: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
-                }
-            }
+    @MainActor
+    func clearAllEvents() throws {
+        do {
+            try context.delete(model: AnalyticsEventEntity.self)
+            try context.save()
+            logger.info("📊 All analytics events cleared")
+        } catch {
+            logger.error("❌ Failed to clear analytics events: \(error.localizedDescription)")
+            throw error
         }
     }
-    
+
     /// Mark events as synced
-    func markEventsSynced(_ eventIds: [String]) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            Task { @MainActor in
-                do {
-                    for eventId in eventIds {
-                        let predicate = #Predicate<AnalyticsEventEntity> { event in
-                            event.id == eventId
-                        }
-                        let descriptor = FetchDescriptor<AnalyticsEventEntity>(predicate: predicate)
-                        
-                        if let event = try context.fetch(descriptor).first {
-                            event.isSynced = true
-                        }
-                    }
-                    
-                    try context.save()
-                    logger.info("📊 Marked \(eventIds.count) events as synced")
-                    continuation.resume()
-                } catch {
-                    logger.error("❌ Failed to mark events as synced: \(error.localizedDescription)")
-                    continuation.resume(throwing: error)
+    @MainActor
+    func markEventsSynced(_ eventIds: [String]) throws {
+        do {
+            for eventId in eventIds {
+                let predicate = #Predicate<AnalyticsEventEntity> { event in
+                    event.id == eventId
+                }
+                let descriptor = FetchDescriptor<AnalyticsEventEntity>(predicate: predicate)
+
+                if let event = try context.fetch(descriptor).first {
+                    event.isSynced = true
                 }
             }
+
+            try context.save()
+            logger.info("📊 Marked \(eventIds.count) events as synced")
+        } catch {
+            logger.error("❌ Failed to mark events as synced: \(error.localizedDescription)")
+            throw error
         }
     }
     

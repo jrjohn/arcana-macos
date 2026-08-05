@@ -44,12 +44,17 @@ pipeline {
                 // Official scanner image on the devops_default network. `qualitygate.wait`
                 // makes the scanner block on the gate and fail the build if it is red — no
                 // Jenkins webhook needed.
+                //
+                // Docker-outside-of-Docker: the Jenkins container's /var/jenkins_home is bind-
+                // mounted from the host at /opt/arcana-state/jenkins-home, so the daemon needs
+                // the HOST path for the volume mount, not the in-container ${WORKSPACE}.
                 sh '''
+                    HOST_WS=$(printf '%s' "${WORKSPACE}" | sed 's#^/var/jenkins_home#/opt/arcana-state/jenkins-home#')
                     docker run --rm \
                         --network devops_default \
                         -e SONAR_HOST_URL=${SQ_URL} \
                         -e SONAR_TOKEN=${SQ_TOKEN} \
-                        -v "${WORKSPACE}:/usr/src" \
+                        -v "${HOST_WS}:/usr/src" \
                         sonarsource/sonar-scanner-cli:11 \
                         -Dsonar.projectKey=arcana-macos \
                         "-Dsonar.projectName=Arcana macOS" \

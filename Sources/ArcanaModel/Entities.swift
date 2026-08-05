@@ -42,6 +42,10 @@ public final class Customer {
     public var isSoftDeleted: Bool
     public var syncId: UUID
     public var isPendingSync: Bool
+    // CRDT sync state (ArcanaSync).
+    public var vectorClockJson: String?
+    public var modifiedByNodeId: String?
+    public var hasConflict: Bool = false
 
     public init(code: String, name: String, creditLimit: Decimal = 0, balance: Decimal = 0, isActive: Bool = true) {
         self.code = code
@@ -96,6 +100,10 @@ public final class Product {
     public var isSoftDeleted: Bool
     public var syncId: UUID
     public var isPendingSync: Bool
+    // CRDT sync state (ArcanaSync).
+    public var vectorClockJson: String?
+    public var modifiedByNodeId: String?
+    public var hasConflict: Bool = false
 
     public init(code: String, name: String, unit: String = "PCS", price: Decimal = 0, cost: Decimal = 0,
                 stockQuantity: Decimal = 0, isActive: Bool = true) {
@@ -152,6 +160,10 @@ public final class Order {
     public var isSoftDeleted: Bool
     public var syncId: UUID
     public var isPendingSync: Bool
+    // CRDT sync state (ArcanaSync).
+    public var vectorClockJson: String?
+    public var modifiedByNodeId: String?
+    public var hasConflict: Bool = false
 
     public var status: OrderStatus {
         get { OrderStatus(rawValue: statusRaw) ?? .draft }

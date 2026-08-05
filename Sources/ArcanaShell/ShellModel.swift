@@ -72,6 +72,7 @@ public final class ShellModel {
         SidebarItem(id: "OrderListPage", title: "Orders", systemImage: "cart"),
         SidebarItem(id: "ReportsPage", title: "Reports", systemImage: "chart.bar"),
         SidebarItem(id: "UsersPage", title: "Users & Roles", systemImage: "person.badge.key"),
+        SidebarItem(id: "SyncPage", title: "Sync", systemImage: "arrow.triangle.2.circlepath"),
         SidebarItem(id: "PluginManagerPage", title: "Plugins", systemImage: "puzzlepiece"),
     ]
 

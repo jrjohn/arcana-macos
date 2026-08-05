@@ -40,6 +40,7 @@ public enum CompositionRoot {
         factory.register("ReportsPage") { AnyView(SimpleListPlaceholder(title: "Reports", systemImage: "chart.bar")) }
         factory.register("PluginManagerPage") { AnyView(PluginManagerView(manager: manager)) }
         factory.register("UsersPage") { AnyView(UsersView()) }
+        factory.register("SyncPage") { AnyView(SyncView()) }
 
         return ShellModel(manager: manager, viewFactory: factory,
                           modelContainer: container, currentUser: CurrentUserService())

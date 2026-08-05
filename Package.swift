@@ -79,7 +79,7 @@ let package = Package(
         // MenuBarExtra + Settings + a dynamic main menu built from plugin contributions.
         .target(
             name: "ArcanaShell",
-            dependencies: ["ArcanaPluginContracts", "ArcanaPlugins", "ArcanaModel"],
+            dependencies: ["ArcanaPluginContracts", "ArcanaPlugins", "ArcanaModel", "ArcanaSync"],
             path: "Sources/ArcanaShell",
             swiftSettings: [
                 .swiftLanguageMode(.v6)

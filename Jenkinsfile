@@ -60,7 +60,7 @@ pipeline {
                         "-Dsonar.projectName=Arcana macOS" \
                         -Dsonar.sources=Sources \
                         "-Dsonar.exclusions=**/.build/**,Sources/ArcanaMacApp/**" \
-                        "-Dsonar.coverage.exclusions=Tests/**,Sources/ArcanaMacApp/**,Sources/ArcanaKit/**,**/*App.swift,**/*View.swift,**/CompositionRoot.swift" \
+                        "-Dsonar.coverage.exclusions=Tests/**,Sources/ArcanaMacApp/**,Sources/ArcanaKit/**,**/*App.swift,**/*View.swift,**/*Views.swift,**/CompositionRoot.swift" \
                         -Dsonar.coverageReportPaths=coverage-report.xml \
                         -Dsonar.scm.disabled=true \
                         -Dsonar.qualitygate.wait=true

@@ -186,7 +186,7 @@ public enum IdentitySeed {
         if let existing = try? context.fetch(FetchDescriptor<Role>(predicate: #Predicate { $0.name == adminRoleName })).first {
             adminRole = existing
         } else {
-            adminRole = Role(name: SystemRoles.administrator, displayName: "Administrator", isSystem: true, priority: 100)
+            adminRole = Role(entityId: 1, name: SystemRoles.administrator, displayName: "Administrator", isSystem: true, priority: 100)
             context.insert(adminRole)
             for code in SystemPermissions.all {
                 context.insert(RolePermission(roleId: 1, permissionCode: code))
@@ -198,7 +198,7 @@ public enum IdentitySeed {
         if let existing = try? context.fetch(FetchDescriptor<User>(predicate: #Predicate { $0.username == "admin" })).first {
             admin = existing
         } else {
-            admin = User(username: "admin", displayName: "Administrator",
+            admin = User(entityId: 1, username: "admin", displayName: "Administrator",
                          passwordHash: hasher.hash(adminPassword), isActive: true)
             context.insert(admin)
             context.insert(UserRole(userId: 1, roleId: 1))

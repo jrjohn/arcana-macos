@@ -20,9 +20,16 @@ public struct ArcanaShellApp: App {
 
     public var body: some Scene {
         WindowGroup {
-            ShellView(shell: shell, theme: theme)
-                .task { await shell.bootstrap() }
-                .frame(minWidth: 900, minHeight: 560)
+            Group {
+                if shell.currentUser.isAuthenticated {
+                    ShellView(shell: shell, theme: theme)
+                        .task { await shell.bootstrap() }
+                } else {
+                    LoginView(shell: shell)
+                }
+            }
+            .environment(shell.currentUser)
+            .frame(minWidth: 900, minHeight: 560)
         }
         .modelContainer(shell.modelContainer)
         .commands {
@@ -49,6 +56,15 @@ struct ShellCommands: Commands {
     var body: some Commands {
         CommandMenu("Modules") {
             menuContent(shell.mainMenu)
+        }
+        CommandMenu("Account") {
+            if let user = shell.currentUser.currentUser {
+                Text("Signed in as \(user.displayName)")
+                Text("Roles: \(user.roles.joined(separator: ", "))")
+                Divider()
+                Button("Sign Out") { signOut(shell) }
+                    .keyboardShortcut("q", modifiers: [.command, .shift])
+            }
         }
     }
 

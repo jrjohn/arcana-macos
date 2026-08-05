@@ -179,3 +179,47 @@ struct ServiceCoverageTests {
         #expect((try? service.create(bad).get()) == nil)
     }
 }
+
+@Suite("AuthService login flow", .serialized)
+@MainActor
+struct AuthServiceTests {
+    static let container: ModelContainer = {
+        try! ModelContainer(for: Schema(ArcanaSchema.models),
+                            configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+    }()
+    private var context: ModelContext { Self.container.mainContext }
+
+    @Test("admin authenticates and gets all system permissions + the Administrator role")
+    func adminLogin() {
+        IdentitySeed.seed(context: context, adminPassword: "admin")
+        let session = CurrentUserService()
+        let auth = AuthService(context: context, session: session)
+
+        let result = auth.authenticate(username: "admin", password: "admin")
+        let user = try? result.get()
+        #expect(user != nil)
+        #expect(session.isAuthenticated)
+        #expect(user?.roles.contains(SystemRoles.administrator) == true)
+        #expect(user?.permissions.count == SystemPermissions.all.count)
+        #expect(session.hasPermission(SystemPermissions.ordersDelete))
+    }
+
+    @Test("wrong password fails and does not start a session")
+    func wrongPassword() {
+        IdentitySeed.seed(context: context, adminPassword: "admin")
+        let session = CurrentUserService()
+        let auth = AuthService(context: context, session: session)
+        #expect((try? auth.authenticate(username: "admin", password: "nope").get()) == nil)
+        #expect(!session.isAuthenticated)
+    }
+
+    @Test("logout clears the session")
+    func logout() {
+        IdentitySeed.seed(context: context, adminPassword: "admin")
+        let session = CurrentUserService()
+        let auth = AuthService(context: context, session: session)
+        _ = auth.authenticate(username: "admin", password: "admin")
+        auth.logout()
+        #expect(!session.isAuthenticated)
+    }
+}

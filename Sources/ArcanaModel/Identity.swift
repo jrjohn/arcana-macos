@@ -10,6 +10,8 @@ import SwiftData
 
 @Model
 public final class User {
+    /// Stable integer identity that the junction tables reference (assigned at seed/create).
+    public var entityId: Int
     @Attribute(.unique) public var username: String
     public var email: String?
     public var displayName: String
@@ -27,7 +29,8 @@ public final class User {
     public var createdAt: Date
     public var isSoftDeleted: Bool
 
-    public init(username: String, displayName: String, passwordHash: String, email: String? = nil, isActive: Bool = true) {
+    public init(entityId: Int = 0, username: String, displayName: String, passwordHash: String, email: String? = nil, isActive: Bool = true) {
+        self.entityId = entityId
         self.username = username
         self.displayName = displayName
         self.passwordHash = passwordHash
@@ -43,6 +46,8 @@ public final class User {
 
 @Model
 public final class Role {
+    /// Stable integer identity that the junction tables reference.
+    public var entityId: Int
     @Attribute(.unique) public var name: String
     public var displayName: String
     public var roleDescription: String?
@@ -51,7 +56,8 @@ public final class Role {
     public var createdAt: Date
     public var isSoftDeleted: Bool
 
-    public init(name: String, displayName: String, isSystem: Bool = false, priority: Int = 0) {
+    public init(entityId: Int = 0, name: String, displayName: String, isSystem: Bool = false, priority: Int = 0) {
+        self.entityId = entityId
         self.name = name
         self.displayName = displayName
         self.isSystem = isSystem

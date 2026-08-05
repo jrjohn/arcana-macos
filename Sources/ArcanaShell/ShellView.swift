@@ -109,6 +109,9 @@ struct StatusBarView: View {
         HStack(spacing: 12) {
             Text(shell.statusMessage).font(.caption)
             Spacer()
+            if let user = shell.currentUser.currentUser {
+                Label(user.displayName, systemImage: "person.circle").font(.caption).foregroundStyle(.secondary)
+            }
             Label("Online", systemImage: "wifi").font(.caption).foregroundStyle(.secondary)
             Text(now, style: .time).font(.caption.monospacedDigit())
         }

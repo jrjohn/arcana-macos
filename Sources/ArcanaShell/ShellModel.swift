@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import ArcanaPluginContracts
 import ArcanaPlugins
+import ArcanaModel
 
 /// One open document tab.
 public struct OpenTab: Identifiable, Sendable, Equatable {
@@ -47,6 +48,7 @@ public final class ShellModel {
     public let manager: PluginManager
     public let viewFactory: ViewFactoryRegistry
     public let modelContainer: ModelContainer
+    public let currentUser: CurrentUserService
 
     public private(set) var tabs: [OpenTab] = []
     public var selectedTabId: String?
@@ -69,13 +71,16 @@ public final class ShellModel {
         SidebarItem(id: "ProductListPage", title: "Products", systemImage: "shippingbox"),
         SidebarItem(id: "OrderListPage", title: "Orders", systemImage: "cart"),
         SidebarItem(id: "ReportsPage", title: "Reports", systemImage: "chart.bar"),
+        SidebarItem(id: "UsersPage", title: "Users & Roles", systemImage: "person.badge.key"),
         SidebarItem(id: "PluginManagerPage", title: "Plugins", systemImage: "puzzlepiece"),
     ]
 
-    public init(manager: PluginManager, viewFactory: ViewFactoryRegistry, modelContainer: ModelContainer) {
+    public init(manager: PluginManager, viewFactory: ViewFactoryRegistry,
+                modelContainer: ModelContainer, currentUser: CurrentUserService) {
         self.manager = manager
         self.viewFactory = viewFactory
         self.modelContainer = modelContainer
+        self.currentUser = currentUser
     }
 
     // MARK: - Bootstrap
@@ -109,7 +114,11 @@ public final class ShellModel {
             SidebarItem(id: $0.command ?? $0.id, title: $0.title,
                         systemImage: $0.icon ?? "doc", isCommand: $0.command != nil)
         }
-        return Self.builtInSidebar + dynamic
+        // Gate the admin destination on the users.view permission.
+        let builtIns = Self.builtInSidebar.filter {
+            $0.id != "UsersPage" || currentUser.hasPermission(SystemPermissions.usersView)
+        }
+        return builtIns + dynamic
     }
 
     public func selectSidebar(_ item: SidebarItem) {

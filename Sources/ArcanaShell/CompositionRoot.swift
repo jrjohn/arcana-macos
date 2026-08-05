@@ -24,8 +24,9 @@ public enum CompositionRoot {
                 for: Schema(ArcanaSchema.models),
                 configurations: ModelConfiguration(isStoredInMemoryOnly: true)))
 
-        // First-launch identity seed (admin + system roles/permissions), idempotent.
+        // First-launch identity seed (admin + system roles/permissions) + demo data, idempotent.
         IdentitySeed.seed(context: container.mainContext)
+        SampleData.seed(context: container.mainContext)
 
         let manager = PluginManager()
         manager.register(CoreMenuPlugin())
@@ -36,7 +37,7 @@ public enum CompositionRoot {
         factory.register("CustomerListPage") { AnyView(CustomerListView()) }   // real SwiftData view
         factory.register("CustomerDetailPage") { AnyView(SimpleListPlaceholder(title: "Customer", systemImage: "person.crop.circle")) }
         factory.register("ProductListPage") { AnyView(SimpleListPlaceholder(title: "Products", systemImage: "shippingbox")) }
-        factory.register("OrderListPage") { AnyView(SimpleListPlaceholder(title: "Orders", systemImage: "cart")) }
+        factory.register("OrderListPage") { AnyView(OrdersView()) }
         factory.register("ReportsPage") { AnyView(SimpleListPlaceholder(title: "Reports", systemImage: "chart.bar")) }
         factory.register("PluginManagerPage") { AnyView(PluginManagerView(manager: manager)) }
 

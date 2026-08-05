@@ -34,9 +34,8 @@ public enum CompositionRoot {
 
         let factory = ViewFactoryRegistry()
         factory.register("HomePage") { AnyView(HomeView()) }
-        factory.register("CustomerListPage") { AnyView(CustomerListView()) }   // real SwiftData view
-        factory.register("CustomerDetailPage") { AnyView(SimpleListPlaceholder(title: "Customer", systemImage: "person.crop.circle")) }
-        factory.register("ProductListPage") { AnyView(SimpleListPlaceholder(title: "Products", systemImage: "shippingbox")) }
+        factory.register("CustomerListPage") { AnyView(CustomersView()) }
+        factory.register("ProductListPage") { AnyView(ProductsView()) }
         factory.register("OrderListPage") { AnyView(OrdersView()) }
         factory.register("ReportsPage") { AnyView(SimpleListPlaceholder(title: "Reports", systemImage: "chart.bar")) }
         factory.register("PluginManagerPage") { AnyView(PluginManagerView(manager: manager)) }

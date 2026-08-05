@@ -1,7 +1,8 @@
 //
 //  main.swift
-//  ArcanaMacApp — the executable. All the app lives in ArcanaKit; this just launches it.
+//  ArcanaMacApp — the executable. The desktop shell (P4) is the app; it composes the
+//  plugin system and hosts the feature modules.
 //
-import ArcanaKit
+import ArcanaShell
 
-ArcanaApp.main()
+ArcanaShellApp.main()

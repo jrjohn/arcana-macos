@@ -86,9 +86,25 @@ as **two dependency-free SPM targets** (`.swiftLanguageMode(.v6)`) mirroring the
   localization file loader, and the periodic health `Timer`. Plugins are static Swift modules
   that self-register at launch, exactly as the roadmap called for.
 
-## ⏳ P4 — Desktop shell (macOS-native)
-`WindowGroup` + `MenuBarExtra` + `Settings` + `.commands` main menu, `NavigationSplitView` sidebar,
-multi-window / document tabs / tear-off windows, ThemeService. Wire plugin-contributed menus/views/routes in.
+## ✅ P4 — Desktop shell (`ArcanaShell`) (done)
+The SwiftUI macOS shell, ported from the Windows MainWindow/App composition, as its own
+target (`.swiftLanguageMode(.v6)`). `swift build` + the **9-test `ArcanaShellTests` suite are green**.
+- **Chrome** — `NavigationSplitView` sidebar (built-in nav + plugin `FunctionTree` items) +
+  a document **tab strip** (single- vs multi-instance, close, back/forward) + a status bar
+  (message / online / live clock); `MenuBarExtra`; a `Settings` scene (theme + language).
+- **Dynamic main menu** — `.commands` builds a menu from the plugin-contributed `MenuItemDefinition`s
+  via `MenuTree` (`.mainMenu` roots + `parentId` nesting, ordered), dispatching `command` ids
+  through the `CommandRegistry`.
+- **View resolution** — a `ViewFactoryRegistry` replaces the Windows XAML type resolver: plugins
+  (compiled-in) register a SwiftUI view factory per view id; the shell resolves tabs through it.
+- **Navigation** — plugin commands publish `NavigationRequested` on the message bus; the shell
+  subscribes and opens the target tab (the async handler makes it deterministic).
+- **Composition root** — `CompositionRoot.makeShell()` builds the `PluginManager`, registers the
+  built-in plugins (`CoreMenuPlugin` chrome + `CustomerModulePlugin`), and wires view factories.
+- **Theme + localization** — `@Observable` `ThemeStore` (`.preferredColorScheme` + `.tint`) and
+  `LocalizationStore` (zh-TW / en-US / ja-JP), persisted via `AppSettings` (UserDefaults).
+- The executable (`ArcanaMacApp`) now launches `ArcanaShellApp`.
+- **Deferred to P5**: real feature views (placeholders today); tear-off/floating document windows.
 
 ## ⏳ P5 — Feature modules + RBAC/Identity
 Port Customer / Order / Product CRUD (as built-in plugins) + Identity/Role/Permission/Audit +

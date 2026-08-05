@@ -19,6 +19,7 @@ let package = Package(
         .library(name: "ArcanaSync", targets: ["ArcanaSync"]),
         .library(name: "ArcanaPluginContracts", targets: ["ArcanaPluginContracts"]),
         .library(name: "ArcanaPlugins", targets: ["ArcanaPlugins"]),
+        .library(name: "ArcanaShell", targets: ["ArcanaShell"]),
         .executable(name: "ArcanaMacApp", targets: ["ArcanaMacApp"]),
     ],
     dependencies: [
@@ -63,6 +64,16 @@ let package = Package(
                 .swiftLanguageMode(.v6)
             ]
         ),
+        // The macOS desktop shell (P4): SwiftUI NavigationSplitView + document tabs +
+        // MenuBarExtra + Settings + a dynamic main menu built from plugin contributions.
+        .target(
+            name: "ArcanaShell",
+            dependencies: ["ArcanaPluginContracts", "ArcanaPlugins"],
+            path: "Sources/ArcanaShell",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
         .target(
             name: "ArcanaKit",
             dependencies: [
@@ -82,7 +93,7 @@ let package = Package(
         // Thin launcher: `ArcanaApp.main()`.
         .executableTarget(
             name: "ArcanaMacApp",
-            dependencies: ["ArcanaKit"],
+            dependencies: ["ArcanaKit", "ArcanaShell"],
             path: "Sources/ArcanaMacApp",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
@@ -105,6 +116,14 @@ let package = Package(
             name: "ArcanaPluginsTests",
             dependencies: ["ArcanaPlugins", "ArcanaPluginContracts"],
             path: "Tests/ArcanaPluginsTests",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
+        .testTarget(
+            name: "ArcanaShellTests",
+            dependencies: ["ArcanaShell", "ArcanaPlugins", "ArcanaPluginContracts"],
+            path: "Tests/ArcanaShellTests",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

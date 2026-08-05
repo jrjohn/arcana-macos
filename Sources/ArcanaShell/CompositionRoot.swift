@@ -16,13 +16,20 @@ public enum CompositionRoot {
     /// built-in plugins + view factories (incl. the real SwiftData-backed Customer list).
     @MainActor
     public static func makeShell(inMemory: Bool = false) -> ShellModel {
-        // SwiftData container. In-memory for tests/previews; on disk for the real app.
-        let container = (try? ModelContainer(
-            for: Schema(ArcanaSchema.models),
-            configurations: ModelConfiguration(isStoredInMemoryOnly: inMemory)))
-            ?? (try! ModelContainer(
-                for: Schema(ArcanaSchema.models),
-                configurations: ModelConfiguration(isStoredInMemoryOnly: true)))
+        // SwiftData container. In-memory for tests/previews; on disk for the real app, at a
+        // versioned store URL so a schema bump starts a clean store instead of colliding with
+        // an older on-disk schema. Falls back to in-memory if the store can't be opened.
+        let schema = Schema(ArcanaSchema.models)
+        let configuration: ModelConfiguration
+        if inMemory {
+            configuration = ModelConfiguration(isStoredInMemoryOnly: true)
+        } else {
+            let base = URL.applicationSupportDirectory.appending(path: "Arcana", directoryHint: .isDirectory)
+            try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+            configuration = ModelConfiguration(url: base.appending(path: "arcana-v2.store"))
+        }
+        let container = (try? ModelContainer(for: schema, configurations: configuration))
+            ?? (try! ModelContainer(for: schema, configurations: ModelConfiguration(isStoredInMemoryOnly: true)))
 
         // First-launch identity seed (admin + system roles/permissions) + demo data, idempotent.
         IdentitySeed.seed(context: container.mainContext)

@@ -133,7 +133,7 @@ let package = Package(
         ),
         .testTarget(
             name: "ArcanaShellTests",
-            dependencies: ["ArcanaShell", "ArcanaPlugins", "ArcanaPluginContracts"],
+            dependencies: ["ArcanaShell", "ArcanaPlugins", "ArcanaPluginContracts", "ArcanaModel", "ArcanaSync"],
             path: "Tests/ArcanaShellTests",
             swiftSettings: [
                 .swiftLanguageMode(.v6)

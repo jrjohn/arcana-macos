@@ -63,11 +63,28 @@ target** (`Sources/ArcanaSync`, `.swiftLanguageMode(.v6)`), mirroring the .NET a
 **Next:** wire the offline-first repository's pending-change queue onto `ArcanaSync` (replacing the
 iOS base's timestamp-LWW), and add a concrete `SyncService` actor over SwiftData.
 
-## ⏳ P3 — Plugin system (`ArcanaPluginContracts` + `ArcanaPlugins`)
-Port the VS Code-style contribution model: `ArcanaPlugin` protocol, `PluginManifest`,
-activation events, Menu/View/Command registries, MessageBus/EventAggregator, permissions, health,
-version store. **macOS forbids Windows-style DLL hot-loading**, so plugins are static Swift-package
-modules conforming to `ArcanaPlugin`, self-registering at launch. Reference plugin: port `FlowChartModule`.
+## ✅ P3 — Plugin system (`ArcanaPluginContracts` + `ArcanaPlugins`) (done)
+A faithful Swift port of the Windows `Arcana.Plugins.Contracts` + `Arcana.Plugins` assemblies,
+as **two dependency-free SPM targets** (`.swiftLanguageMode(.v6)`) mirroring the .NET split.
+`swift build` + the **14-test `ArcanaPluginsTests` suite are green**.
+- **Contracts** — `ArcanaPlugin` (@MainActor) + `PluginContext`; the `PluginType` (18-case)
+  taxonomy + `PluginState`; contribution defs (`MenuItemDefinition`/12 `MenuLocation`,
+  `ViewDefinition`/5 `ViewType`, `CommandDefinition`); registry protocols; `MessageBus` /
+  `EventAggregator` / `SharedStateStore`; `PluginPermission` as a 20-bit **`OptionSet`** with
+  the composites; `HealthState` / `PluginHealthStatus`; the declarative `PluginManifest` +
+  `ManifestContributions`; `ActivationEvents` parsing; and the id-regex `ContributionValidators`.
+- **Runtime** — lock-guarded `Sendable` service impls (menu/view/command registries, a typed
+  `MessageBus` with request/response, `EventAggregator`, `SharedStateStore`, permission
+  manager); `ArcanaPluginBase` with auto-tracked `register*` helpers; and a `PluginManager`
+  that does **dependency-ordered activation** (topological sort, cycle detection),
+  **activation-event gating**, subscription teardown on deactivate, and a `PluginStateChange`
+  `AsyncStream`. Reference plugin: **`CustomerModulePlugin`** (programmatic view/menu/command).
+- **Isolation model** — plugin-facing surface is `@MainActor` (UI contributions); services are
+  lock-guarded `@unchecked Sendable`, so background code can still publish to the bus.
+- **Deliberately out of scope** (macOS has no equivalent / host concerns): dynamic
+  `AssemblyLoadContext` load-unload, ZIP install/upgrade/rollback, the EF version store, the
+  localization file loader, and the periodic health `Timer`. Plugins are static Swift modules
+  that self-register at launch, exactly as the roadmap called for.
 
 ## ⏳ P4 — Desktop shell (macOS-native)
 `WindowGroup` + `MenuBarExtra` + `Settings` + `.commands` main menu, `NavigationSplitView` sidebar,

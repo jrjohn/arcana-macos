@@ -29,6 +29,10 @@ Sources/
     App/                ArcanaApp (WindowGroup + Settings), Compat (macOS shims)
   ArcanaSync/           CRDT sync engine (own target): VectorClock, LWW/MVRegister,
                         ConflictResolver, SyncableEntity, SyncService — port of Arcana.Sync
+  ArcanaPluginContracts/  plugin contracts: ArcanaPlugin, PluginContext, contribution defs,
+                          MessageBus/EventAggregator, PluginPermission, manifest, validators
+  ArcanaPlugins/        plugin runtime: registries, message bus, permission manager,
+                        PluginBase + PluginManager, CustomerModulePlugin — port of Arcana.Plugins
   ArcanaMacApp/         thin launcher — `ArcanaApp.main()`
 Tests/                  Swift Testing, mirrored by layer
 ```
@@ -39,10 +43,10 @@ MVVM is **Input / Output / Effect**: `@Observable @MainActor` view models with a
 ## Status
 
 See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md). **P0 (scaffold) + P1 (Swift base) +
-P1.5 (Swift 6 strict concurrency) + P2 (CRDT sync engine, `ArcanaSync`) are done — the
-package builds + tests green (`ArcanaSyncTests`: 18 CRDT-law tests) with zero concurrency
-diagnostics.** Next: the plugin system (P3), the desktop shell (P4), feature modules +
-RBAC (P5), and CI (P6).
+P1.5 (Swift 6 strict concurrency) + P2 (CRDT sync engine, `ArcanaSync`) + P3 (plugin system,
+`ArcanaPluginContracts` + `ArcanaPlugins`) are done — the package builds + tests green
+(33 tests across `ArcanaSyncTests` + `ArcanaPluginsTests` + smoke) with zero concurrency
+diagnostics.** Next: the desktop shell (P4), feature modules + RBAC (P5), and CI (P6).
 
 ## License
 

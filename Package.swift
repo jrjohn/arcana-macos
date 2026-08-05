@@ -17,6 +17,8 @@ let package = Package(
     products: [
         .library(name: "ArcanaKit", targets: ["ArcanaKit"]),
         .library(name: "ArcanaSync", targets: ["ArcanaSync"]),
+        .library(name: "ArcanaPluginContracts", targets: ["ArcanaPluginContracts"]),
+        .library(name: "ArcanaPlugins", targets: ["ArcanaPlugins"]),
         .executable(name: "ArcanaMacApp", targets: ["ArcanaMacApp"]),
     ],
     dependencies: [
@@ -38,6 +40,25 @@ let package = Package(
         .target(
             name: "ArcanaSync",
             path: "Sources/ArcanaSync",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
+        // The plugin system — a faithful Swift port of the Windows Arcana.Plugins assembly
+        // split. Contracts are pure declarations; the runtime (registries, message bus,
+        // permissions, plugin base + manager) is the static-registration adaptation
+        // (macOS forbids DLL hot-loading). Both zero-dependency, own targets.
+        .target(
+            name: "ArcanaPluginContracts",
+            path: "Sources/ArcanaPluginContracts",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
+        .target(
+            name: "ArcanaPlugins",
+            dependencies: ["ArcanaPluginContracts"],
+            path: "Sources/ArcanaPlugins",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]
@@ -76,6 +97,14 @@ let package = Package(
             name: "ArcanaSyncTests",
             dependencies: ["ArcanaSync"],
             path: "Tests/ArcanaSyncTests",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
+        .testTarget(
+            name: "ArcanaPluginsTests",
+            dependencies: ["ArcanaPlugins", "ArcanaPluginContracts"],
+            path: "Tests/ArcanaPluginsTests",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

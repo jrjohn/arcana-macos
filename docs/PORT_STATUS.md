@@ -41,10 +41,27 @@ The systematic fixes:
 - One generic `Publisher.async()` helper constrained to **`Output: Sendable`**.
 - DI globals → **`nonisolated(unsafe)`**; test/preview doubles → `final` + `@unchecked Sendable`.
 
-## ⏳ P2 — CRDT sync engine (`ArcanaSync`)
-Port `Arcana.Sync` from Windows: `VectorClock`, `LWWRegister`, `MVRegister`, `ConflictResolver`,
-`SyncableEntity`, `SyncService` (actor), layered on SwiftData. Replaces the iOS base's weaker
-timestamp-LWW queue with proper vector-clock CRDT.
+## ✅ P2 — CRDT sync engine (`ArcanaSync`) (done)
+A faithful Swift port of the Windows `Arcana.Sync` assembly, as its **own dependency-free SPM
+target** (`Sources/ArcanaSync`, `.swiftLanguageMode(.v6)`), mirroring the .NET assembly split.
+`swift build` + the **18-test `ArcanaSyncTests` suite are green**.
+- **`VectorClock`** — immutable value type; `incremented` / `merged` (component-wise max) /
+  `relation(to:)` → `CausalRelation` (after / before / concurrent / equal); `Comparable` by
+  causality; JSON `serialized()` / `deserialize` matching the C# wire form.
+- **`LWWRegister<Value>`** + **`LWWMap`** — last-writer-wins with node-id tie-break; the map
+  does field-level merges so concurrent edits to different fields both survive. C#'s `object?`
+  field value becomes a closed, `Sendable`/`Codable` `SyncValue` enum.
+- **`MVRegister<Value>`** — keeps all causally-maximal concurrent values, drops dominated ones,
+  `resolve` collapses them.
+- **`ConflictResolver`** — causal short-circuits, then a per-type strategy registry
+  (`lastWriterWins` / `firstWriterWins` / `fieldLevelMerge` / `keepBoth` / `custom`) with a
+  merged-and-bumped clock. C#'s property reflection is replaced by the `SyncResolvable` protocol
+  (`entityId` + optional `fieldLevelMerged`).
+- **`SyncableEntity`** (+ `SyncMetadata`, `SyncConflictRecord`), **`SyncService`** protocol with
+  `SyncState` / `SyncOperationType` and `AsyncStream` progress (the idiomatic swap for C# events).
+
+**Next:** wire the offline-first repository's pending-change queue onto `ArcanaSync` (replacing the
+iOS base's timestamp-LWW), and add a concrete `SyncService` actor over SwiftData.
 
 ## ⏳ P3 — Plugin system (`ArcanaPluginContracts` + `ArcanaPlugins`)
 Port the VS Code-style contribution model: `ArcanaPlugin` protocol, `PluginManifest`,

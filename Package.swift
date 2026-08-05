@@ -16,6 +16,7 @@ let package = Package(
     ],
     products: [
         .library(name: "ArcanaKit", targets: ["ArcanaKit"]),
+        .library(name: "ArcanaSync", targets: ["ArcanaSync"]),
         .executable(name: "ArcanaMacApp", targets: ["ArcanaMacApp"]),
     ],
     dependencies: [
@@ -30,9 +31,21 @@ let package = Package(
         // The whole app, as a library: layers + the SwiftUI App itself (public entry
         // `ArcanaApp`). Keeping the App here lets every layer stay `internal` while the
         // thin executable below only needs the one public symbol.
+        // The CRDT sync engine — a faithful Swift port of the Windows `Arcana.Sync`
+        // assembly (VectorClock / LWW / MVRegister / ConflictResolver / SyncService).
+        // Pure Swift, zero external dependencies, its own target so the boundary mirrors
+        // the .NET assembly split.
+        .target(
+            name: "ArcanaSync",
+            path: "Sources/ArcanaSync",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
         .target(
             name: "ArcanaKit",
             dependencies: [
+                "ArcanaSync",
                 .product(name: "Dependencies", package: "swift-dependencies"),
                 .product(name: "Alamofire", package: "Alamofire"),
                 .product(name: "LRUCache", package: "LRUCache"),
@@ -58,6 +71,14 @@ let package = Package(
             name: "ArcanaKitTests",
             dependencies: ["ArcanaKit"],
             path: "Tests/ArcanaKitTests"
+        ),
+        .testTarget(
+            name: "ArcanaSyncTests",
+            dependencies: ["ArcanaSync"],
+            path: "Tests/ArcanaSyncTests",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
         ),
     ]
 )

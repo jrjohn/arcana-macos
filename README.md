@@ -27,6 +27,8 @@ Sources/
     ArcanaData/         SwiftData Local DAO, Remote DAO, OfflineFirst Repository, PendingChange queue
     ArcanaPresentation/ MVVM (Input/Output/Effect), NavGraph, Screens, Components, Theme
     App/                ArcanaApp (WindowGroup + Settings), Compat (macOS shims)
+  ArcanaSync/           CRDT sync engine (own target): VectorClock, LWW/MVRegister,
+                        ConflictResolver, SyncableEntity, SyncService — port of Arcana.Sync
   ArcanaMacApp/         thin launcher — `ArcanaApp.main()`
 Tests/                  Swift Testing, mirrored by layer
 ```
@@ -37,9 +39,10 @@ MVVM is **Input / Output / Effect**: `@Observable @MainActor` view models with a
 ## Status
 
 See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md). **P0 (scaffold) + P1 (Swift base) +
-P1.5 (Swift 6 strict concurrency, `.swiftLanguageMode(.v6)`) are done — the package builds
-+ tests green with zero concurrency diagnostics.** Next: the CRDT sync engine (P2), the
-plugin system (P3), the desktop shell (P4), feature modules + RBAC (P5), and CI (P6).
+P1.5 (Swift 6 strict concurrency) + P2 (CRDT sync engine, `ArcanaSync`) are done — the
+package builds + tests green (`ArcanaSyncTests`: 18 CRDT-law tests) with zero concurrency
+diagnostics.** Next: the plugin system (P3), the desktop shell (P4), feature modules +
+RBAC (P5), and CI (P6).
 
 ## License
 

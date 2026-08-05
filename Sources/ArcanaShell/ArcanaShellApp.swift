@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import AppKit
 
 public struct ArcanaShellApp: App {
@@ -23,6 +24,7 @@ public struct ArcanaShellApp: App {
                 .task { await shell.bootstrap() }
                 .frame(minWidth: 900, minHeight: 560)
         }
+        .modelContainer(shell.modelContainer)
         .commands {
             ShellCommands(shell: shell)
         }

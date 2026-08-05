@@ -58,7 +58,7 @@ struct ShellModelTests {
 
     @Test("single-instance tabs de-dupe; multi-instance open new")
     func tabDeduping() {
-        let shell = CompositionRoot.makeShell()
+        let shell = CompositionRoot.makeShell(inMemory: true)
         let first = shell.openTab(viewId: "CustomerListPage", title: "Customers", icon: "person.2")
         let again = shell.openTab(viewId: "CustomerListPage", title: "Customers", icon: "person.2")
         #expect(first == again)                                   // re-selected, not duplicated
@@ -72,7 +72,7 @@ struct ShellModelTests {
 
     @Test("closing the selected tab selects another")
     func closeSelected() {
-        let shell = CompositionRoot.makeShell()
+        let shell = CompositionRoot.makeShell(inMemory: true)
         shell.openTab(viewId: "A", title: "A", icon: "a")
         let b = shell.openTab(viewId: "B", title: "B", icon: "b")
         #expect(shell.selectedTabId == b)
@@ -83,7 +83,7 @@ struct ShellModelTests {
 
     @Test("bootstrap activates plugins, builds the menu tree, opens Home")
     func bootstrap() async {
-        let shell = CompositionRoot.makeShell()
+        let shell = CompositionRoot.makeShell(inMemory: true)
         await shell.bootstrap()
 
         // Core + Customer plugins are active.
@@ -101,7 +101,7 @@ struct ShellModelTests {
 
     @Test("a plugin command's navigation opens the target tab")
     func commandNavigation() async {
-        let shell = CompositionRoot.makeShell()
+        let shell = CompositionRoot.makeShell(inMemory: true)
         await shell.bootstrap()
 
         // customer.list publishes NavigationRequested; the async bus handler runs before

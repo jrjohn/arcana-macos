@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import ArcanaPluginContracts
 import ArcanaPlugins
 
@@ -45,6 +46,7 @@ public final class ShellModel {
 
     public let manager: PluginManager
     public let viewFactory: ViewFactoryRegistry
+    public let modelContainer: ModelContainer
 
     public private(set) var tabs: [OpenTab] = []
     public var selectedTabId: String?
@@ -70,9 +72,10 @@ public final class ShellModel {
         SidebarItem(id: "PluginManagerPage", title: "Plugins", systemImage: "puzzlepiece"),
     ]
 
-    public init(manager: PluginManager, viewFactory: ViewFactoryRegistry) {
+    public init(manager: PluginManager, viewFactory: ViewFactoryRegistry, modelContainer: ModelContainer) {
         self.manager = manager
         self.viewFactory = viewFactory
+        self.modelContainer = modelContainer
     }
 
     // MARK: - Bootstrap

@@ -20,6 +20,7 @@ let package = Package(
         .library(name: "ArcanaPluginContracts", targets: ["ArcanaPluginContracts"]),
         .library(name: "ArcanaPlugins", targets: ["ArcanaPlugins"]),
         .library(name: "ArcanaShell", targets: ["ArcanaShell"]),
+        .library(name: "ArcanaModel", targets: ["ArcanaModel"]),
         .executable(name: "ArcanaMacApp", targets: ["ArcanaMacApp"]),
     ],
     dependencies: [
@@ -64,11 +65,21 @@ let package = Package(
                 .swiftLanguageMode(.v6)
             ]
         ),
+        // Feature modules + Identity/RBAC (P5): SwiftData domain models (Customer/Product/
+        // Order + Identity), domain services, and the auth stack (PBKDF2 hashing, HMAC
+        // tokens, Keychain, RBAC permission resolution).
+        .target(
+            name: "ArcanaModel",
+            path: "Sources/ArcanaModel",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
         // The macOS desktop shell (P4): SwiftUI NavigationSplitView + document tabs +
         // MenuBarExtra + Settings + a dynamic main menu built from plugin contributions.
         .target(
             name: "ArcanaShell",
-            dependencies: ["ArcanaPluginContracts", "ArcanaPlugins"],
+            dependencies: ["ArcanaPluginContracts", "ArcanaPlugins", "ArcanaModel"],
             path: "Sources/ArcanaShell",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
@@ -124,6 +135,14 @@ let package = Package(
             name: "ArcanaShellTests",
             dependencies: ["ArcanaShell", "ArcanaPlugins", "ArcanaPluginContracts"],
             path: "Tests/ArcanaShellTests",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
+        .testTarget(
+            name: "ArcanaModelTests",
+            dependencies: ["ArcanaModel"],
+            path: "Tests/ArcanaModelTests",
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

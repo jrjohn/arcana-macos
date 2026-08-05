@@ -106,9 +106,31 @@ target (`.swiftLanguageMode(.v6)`). `swift build` + the **9-test `ArcanaShellTes
 - The executable (`ArcanaMacApp`) now launches `ArcanaShellApp`.
 - **Deferred to P5**: real feature views (placeholders today); tear-off/floating document windows.
 
-## ⏳ P5 — Feature modules + RBAC/Identity
-Port Customer / Order / Product CRUD (as built-in plugins) + Identity/Role/Permission/Audit +
-Auth/Token/PasswordHasher (Keychain for secrets).
+## ✅ P5 — Feature modules + RBAC/Identity (`ArcanaModel`) (done)
+The domain + identity + auth layer, ported to SwiftData/CryptoKit as its own target
+(`.swiftLanguageMode(.v6)`). `swift build` + the **13-test `ArcanaModelTests` suite are green**.
+- **Foundation** — `AppError`/`ErrorCode`, `AppResult`, `PageRequest`/`PagedResult`.
+- **Business entities** (SwiftData `@Model`, `Decimal` money) — `Customer`, `Product` /
+  `ProductCategory`, `Order` / `OrderItem` with `calculateTotals()` and the computed `lineTotal`;
+  every entity carries the audit / soft-delete / sync field groups.
+- **Domain services** — `CustomerService` / `ProductService` / `OrderService` over `ModelContext`,
+  returning `AppResult`, honoring soft-delete + `isPendingSync`, with order-number generation,
+  line-number assignment, and totals.
+- **Identity** — `User` / `Role` / `AppPermission` / `UserRole` / `RolePermission` /
+  `UserPermission` / `AuditLog`, plus the `SystemRoles` / `SystemPermissions` catalog and an
+  idempotent first-launch `IdentitySeed` (admin + Administrator role + all permissions).
+- **Auth** — `PasswordHasher` (PBKDF2-SHA256, 100k iterations, `version:iterations:salt:hash`
+  format via CommonCrypto), `TokenService` (HMAC-SHA256 via CryptoKit, key from **Keychain**),
+  `CurrentUserService` (`@Observable` session), and the pure `PermissionResolver` (role union
+  then direct grant/deny, expiry + soft-delete filtered).
+- **Shell integration** — the shell now hosts a **real SwiftData-backed `CustomerListView`**
+  (`@Query` + inline create via `CustomerService`); `CompositionRoot` builds + seeds the
+  `ModelContainer` and the window carries `.modelContainer`.
+- **Deferred** (per the spec's first-pass scope): refresh-token rotation / lockout / reset,
+  Order/Product detail editors, DB encryption; ArcanaSync wiring (the `Syncable` fields exist).
+- **Note on SwiftData**: `isDeleted` collides with `NSManagedObject.isDeleted` (→ crash) so the
+  field is `isSoftDeleted`; the test suite shares one in-memory container (per-test containers
+  race CoreData teardown → SIGTRAP).
 
 ## ⏳ P6 — CI + docs
 - **Jenkins `macos-app-pipeline-mb`** at https://arcana.boo/jenkins/ (multibranch), building with

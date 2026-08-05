@@ -35,6 +35,9 @@ Sources/
                         PluginBase + PluginManager, CustomerModulePlugin — port of Arcana.Plugins
   ArcanaShell/          macOS desktop shell: NavigationSplitView + document tabs, MenuBarExtra,
                         Settings, dynamic main menu, ViewFactoryRegistry, theme/localization
+  ArcanaModel/          domain + identity + auth: SwiftData @Models (Customer/Product/Order,
+                        User/Role/Permission/Audit), services, PBKDF2 hashing, HMAC tokens,
+                        Keychain, RBAC permission resolution
   ArcanaMacApp/         thin launcher — `ArcanaShellApp.main()`
 Tests/                  Swift Testing, mirrored by layer
 ```
@@ -46,9 +49,9 @@ MVVM is **Input / Output / Effect**: `@Observable @MainActor` view models with a
 
 See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md). **P0 (scaffold) + P1 (Swift base) +
 P1.5 (Swift 6 strict concurrency) + P2 (CRDT sync engine, `ArcanaSync`) + P3 (plugin system,
-`ArcanaPluginContracts` + `ArcanaPlugins`) + P4 (desktop shell, `ArcanaShell`) are done — the
-package builds + tests green (42 tests) with zero concurrency diagnostics.** Next: feature
-modules + RBAC (P5), and CI (P6).
+`ArcanaPluginContracts` + `ArcanaPlugins`) + P4 (desktop shell, `ArcanaShell`) + P5 (feature
+modules + RBAC/Identity, `ArcanaModel`) are done — the package builds + tests green (55 tests)
+with zero concurrency diagnostics.** Next: CI (P6).
 
 ## License
 

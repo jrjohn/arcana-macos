@@ -10,7 +10,7 @@ import Alamofire
 
 /// API Service for RESTful operations using Alamofire
 /// Connects to reqres.in API for user management
-final class ApiService {
+actor ApiService {
     
     // MARK: - Properties
 

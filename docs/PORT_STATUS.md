@@ -25,13 +25,27 @@ CRDT sync engine, the plugin system, and the desktop shell.
   offline-first repository, `Sendable` on the domain/data protocols, `nonisolated(unsafe)` on the
   DI singletons and `AppConfiguration.shared`.
 
-## ⏳ P1.5 — Swift 6 strict-concurrency uplift (next)
-P1 ships in **Swift 5 language mode** (swift-tools stays 6.0) so the ported base runs now.
-The uplift to `.swiftLanguageMode(.v6)` is a real migration (the arcana-ios base was 5.9):
-- Make the SwiftData access a proper `@ModelActor` or fully `@MainActor`-isolate the Data layer.
-- Audit `Sendable` across services/repositories and their impls (some may need `Sendable` or an actor).
-- Replace `nonisolated(unsafe)` DI globals with an isolated container.
-- Turn strict concurrency on and drive the diagnostics to zero.
+## 🟡 P1.5 — Swift 6 strict-concurrency uplift (~90% done)
+Turning `.swiftLanguageMode(.v6)` on took the diagnostics from ~90 to ~26. The systematic
+fixes are **applied and retained** (they are also valid in v5, so nothing is lost):
+- `ApiService` → an **`actor`** (it holds a non-Sendable Alamofire `Session`).
+- Domain/data protocols → **`Sendable`** (`UserService`, `UserRepository`, `AnalyticsTracker`,
+  `UserLocalDao`, `UserRemoteDao`); value type `PaginatedResult<T: Sendable>: Sendable`.
+- SwiftData DAO / offline-first repository → **`@MainActor`**.
+- DI globals → **`nonisolated(unsafe)`**; test/preview doubles → `final` + `@unchecked Sendable`.
+
+The build mode stays **`.v5`** so it compiles today; the last three sites need per-call
+restructuring to reach full strict `.v6` (each is localized):
+1. **`ApiService`** — the per-request `[String: Any]` Alamofire parameter dictionaries are
+   inherently non-Sendable. Fix: typed `Encodable & Sendable` param structs (or inline GET
+   query into the URL) instead of `[String: Any]`.
+2. **`PersistentAnalyticsTracker`** — `sending 'context' / 'params' / 'events'` across the
+   inner `Task { @MainActor in … }`. Fix: `@MainActor`-isolate the tracker (its SwiftData
+   `context` is already `@MainActor`) and change the protocol's `params: [String: Any]` to
+   `[String: String]` (Sendable analytics metadata).
+3. **`ArcanaCore/Common/Extensions.swift`** — one `sending 'value'` in a generic helper.
+
+Then flip `Package.swift` back to `.swiftLanguageMode(.v6)` and confirm zero diagnostics.
 
 ## ⏳ P2 — CRDT sync engine (`ArcanaSync`)
 Port `Arcana.Sync` from Windows: `VectorClock`, `LWWRegister`, `MVRegister`, `ConflictResolver`,

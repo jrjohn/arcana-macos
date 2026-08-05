@@ -31,9 +31,9 @@ extension DependencyValues {
 
 // Storage for live dependency instances
 private struct DependencyStorage {
-    static var userService: UserService?
-    static var analyticsTracker: AnalyticsTracker?
-    static var userRepository: UserRepository?
+    nonisolated(unsafe) static var userService: UserService?
+    nonisolated(unsafe) static var analyticsTracker: AnalyticsTracker?
+    nonisolated(unsafe) static var userRepository: UserRepository?
 }
 
 private enum UserServiceKey: DependencyKey {
@@ -289,7 +289,7 @@ extension AppDependencies {
 
 // MARK: - Mock Implementations for Testing & Previews
 
-private final class MockUserService: UserService {
+private final class MockUserService: UserService, @unchecked Sendable {
     var getUsersResult: Result<[User], Error> = .success([])
 
     func getUsers() async throws -> [User] {
@@ -355,7 +355,7 @@ private final class MockUserService: UserService {
     }
 }
 
-private final class MockAnalyticsTracker: AnalyticsTracker {
+private final class MockAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
     var sessionId: String = UUID().uuidString
     var trackedEvents: [AnalyticsEvent] = []
 
@@ -376,7 +376,7 @@ private final class MockAnalyticsTracker: AnalyticsTracker {
     }
 }
 
-private final class MockUserRepository: UserRepository {
+private final class MockUserRepository: UserRepository, @unchecked Sendable {
     var getUsersResult: Result<[User], Error> = .success([])
 
     func getUsers() async throws -> [User] {

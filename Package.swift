@@ -39,9 +39,11 @@ let package = Package(
             ],
             path: "Sources/ArcanaKit",
             swiftSettings: [
-                // P1 ships in Swift 5 language mode so the ported arcana-ios base runs
-                // on macOS now; the Swift 6 strict-concurrency uplift (Sendable domain
-                // protocols, isolated DI, actor DAOs) is the next phase (P1.5).
+                // Swift 6 uplift (P1.5) is ~90% done and retained (ApiService is now an
+                // actor; domain/data protocols and value types are Sendable; DI globals are
+                // nonisolated(unsafe); test doubles are @unchecked Sendable). Full strict mode
+                // (.v6) still has 3 localized sites to restructure — see docs/PORT_STATUS.md —
+                // so the buildable mode stays .v5 until those land, WITHOUT losing the work.
                 .swiftLanguageMode(.v5)
             ]
         ),
@@ -51,9 +53,11 @@ let package = Package(
             dependencies: ["ArcanaKit"],
             path: "Sources/ArcanaMacApp",
             swiftSettings: [
-                // P1 ships in Swift 5 language mode so the ported arcana-ios base runs
-                // on macOS now; the Swift 6 strict-concurrency uplift (Sendable domain
-                // protocols, isolated DI, actor DAOs) is the next phase (P1.5).
+                // Swift 6 uplift (P1.5) is ~90% done and retained (ApiService is now an
+                // actor; domain/data protocols and value types are Sendable; DI globals are
+                // nonisolated(unsafe); test doubles are @unchecked Sendable). Full strict mode
+                // (.v6) still has 3 localized sites to restructure — see docs/PORT_STATUS.md —
+                // so the buildable mode stays .v5 until those land, WITHOUT losing the work.
                 .swiftLanguageMode(.v5)
             ]
         ),

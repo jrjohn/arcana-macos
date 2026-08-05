@@ -8,7 +8,7 @@
 import Foundation
 
 /// Mock implementation of UserRemoteDao for development and testing
-final class UserRemoteDaoMockImpl: UserRemoteDao {
+final class UserRemoteDaoMockImpl: UserRemoteDao, @unchecked Sendable {
     
     // MARK: - Configuration
     private let simulateNetworkDelay: Bool

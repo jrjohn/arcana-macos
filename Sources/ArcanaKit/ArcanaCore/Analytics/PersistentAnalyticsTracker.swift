@@ -10,7 +10,7 @@ import SwiftData
 import OSLog
 
 /// Analytics tracker that persists events to SwiftData
-final class PersistentAnalyticsTracker: AnalyticsTracker {
+final class PersistentAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
     
     private let modelContainer: ModelContainer
     private(set) var sessionId: String

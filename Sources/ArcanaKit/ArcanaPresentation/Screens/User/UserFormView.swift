@@ -280,7 +280,7 @@ struct FormField: View {
 }
 
 // MARK: - Preview Mocks
-private class PreviewUserService: UserService {
+private final class PreviewUserService: UserService, @unchecked Sendable {
     func getUsers() async throws -> [User] { [] }
     func getUsers(page: Int, perPage: Int) async throws -> PaginatedResult<User> {
         PaginatedResult(items: [], currentPage: 1, totalPages: 1, hasMore: false)
@@ -293,7 +293,7 @@ private class PreviewUserService: UserService {
     func refreshUsers() async throws -> [User] { [] }
 }
 
-private class PreviewAnalyticsTracker: AnalyticsTracker {
+private final class PreviewAnalyticsTracker: AnalyticsTracker, @unchecked Sendable {
     var sessionId: String = UUID().uuidString
     func trackEvent(_ event: AnalyticsEvent, params: [String: Any]) { }
     func trackScreen(_ screen: String, params: [String: Any]) { }

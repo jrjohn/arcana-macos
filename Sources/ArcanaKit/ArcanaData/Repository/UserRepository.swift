@@ -8,7 +8,7 @@
 import Foundation
 
 /// Result for paginated data
-struct PaginatedResult<T> {
+struct PaginatedResult<T: Sendable>: Sendable {
     let items: [T]
     let currentPage: Int
     let totalPages: Int

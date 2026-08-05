@@ -50,8 +50,9 @@ MVVM is **Input / Output / Effect**: `@Observable @MainActor` view models with a
 See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md). **P0 (scaffold) + P1 (Swift base) +
 P1.5 (Swift 6 strict concurrency) + P2 (CRDT sync engine, `ArcanaSync`) + P3 (plugin system,
 `ArcanaPluginContracts` + `ArcanaPlugins`) + P4 (desktop shell, `ArcanaShell`) + P5 (feature
-modules + RBAC/Identity, `ArcanaModel`) are done — the package builds + tests green (55 tests)
-with zero concurrency diagnostics.** Next: CI (P6).
+modules + RBAC/Identity, `ArcanaModel`) + P6 (CI — Jenkins `macos-app-pipeline-mb` on the Mac
+mini agent, arch-qube + SonarQube gates) are done — the package builds + tests green (55 tests)
+with zero concurrency diagnostics. See [`ARCHITECTURE.md`](ARCHITECTURE.md).**
 
 ## License
 

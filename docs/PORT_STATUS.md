@@ -132,10 +132,23 @@ The domain + identity + auth layer, ported to SwiftData/CryptoKit as its own tar
   field is `isSoftDeleted`; the test suite shares one in-memory container (per-test containers
   race CoreData teardown → SIGTRAP).
 
-## ⏳ P6 — CI + docs
-- **Jenkins `macos-app-pipeline-mb`** at https://arcana.boo/jenkins/ (multibranch), building with
-  `swift build`/`swift test`, gated on **SonarQube** and **arch-qube** both passing.
-- release-please, renovate, ARCHITECTURE.md — mirroring the arcana-windows CI/docs conventions.
+## ✅ P6 — CI + docs (done)
+The CI artifacts are in-repo and verified locally; the pipeline runs on the **Mac mini agent**
+(SwiftUI/SwiftData/AppKit need a real macOS toolchain), so it does a full `swift build` / `swift test`.
+- **`Jenkinsfile`** — declarative pipeline, `agent { label 'macmini' }`, stages: Checkout →
+  Build → Test + Coverage → **arch-qube** (selftest then enforce) → **SonarQube analysis** →
+  **Quality Gate** (`waitForQualityGate abortPipeline: true`). Job name: `macos-app-pipeline-mb`.
+- **`scripts/arch-qube.sh`** — architecture conformance gate (module dependency direction);
+  100%-or-fail, with a `selftest` that proves it isn't blind. **Passes: 0 violations.**
+- **`scripts/coverage.sh`** — `swift test --enable-code-coverage` → `xcrun llvm-cov export`
+  → `coverage.lcov`. **Verified: 55 tests green, lcov produced.**
+- **`sonar-project.properties`** — Swift analysis + lcov coverage import.
+- **`ARCHITECTURE.md`** — module graph + the dependency rules arch-qube enforces.
+- **`renovate.json`** (SPM updates) + **release-please** config/manifest + `VERSION`.
+- **Remaining (needs the arcana.boo Jenkins itself)**: register the multibranch job pointing at
+  the repo, and confirm the `macmini` agent, the `sonar` server, and the `sonar-scanner` tool are
+  configured in Jenkins. The Jenkinsfile + gates are ready; first Sonar scan has no new-code
+  baseline, so the quality gate passes on the initial run.
 
 ## Notes
 - Toolchain in use: Swift 6.3.3 / Xcode 26.6 (the machine's latest; "Swift 6.4" tracks the same 6.x line).

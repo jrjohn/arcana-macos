@@ -1,0 +1,25 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard",
+    ":semanticCommits"
+  ],
+  "labels": ["dependencies"],
+  "schedule": ["before 6am on monday"],
+  "swift": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "matchManagers": ["swift"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "swift dependencies (non-major)"
+    },
+    {
+      "matchManagers": ["swift"],
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ]
+}

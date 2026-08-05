@@ -145,10 +145,12 @@ The CI artifacts are in-repo and verified locally; the pipeline runs on the **Ma
 - **`sonar-project.properties`** — Swift analysis + lcov coverage import.
 - **`ARCHITECTURE.md`** — module graph + the dependency rules arch-qube enforces.
 - **`renovate.json`** (SPM updates) + **release-please** config/manifest + `VERSION`.
-- **Remaining (needs the arcana.boo Jenkins itself)**: register the multibranch job pointing at
-  the repo, and confirm the `macmini` agent, the `sonar` server, and the `sonar-scanner` tool are
-  configured in Jenkins. The Jenkinsfile + gates are ready; first Sonar scan has no new-code
-  baseline, so the quality gate passes on the initial run.
+- **Live & green** — the multibranch job `macos-app-pipeline-mb` is registered on
+  https://arcana.boo/jenkins/ and building `main`. Build #5: `swift build` + **90 tests** +
+  arch-qube (0 violations) + SonarQube **QUALITY GATE PASSED** (coverage **87.7%** over the
+  tested product modules, ratings A/A/A). SonarQube runs via the `sonarsource/sonar-scanner-cli`
+  Docker image on the built-in node (`devops_default` → `sonarqube:9000`), `sonar.qualitygate.wait`
+  blocking the build on the gate.
 
 ## Notes
 - Toolchain in use: Swift 6.3.3 / Xcode 26.6 (the machine's latest; "Swift 6.4" tracks the same 6.x line).

@@ -51,8 +51,9 @@ See [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md). **P0 (scaffold) + P1 (Swift ba
 P1.5 (Swift 6 strict concurrency) + P2 (CRDT sync engine, `ArcanaSync`) + P3 (plugin system,
 `ArcanaPluginContracts` + `ArcanaPlugins`) + P4 (desktop shell, `ArcanaShell`) + P5 (feature
 modules + RBAC/Identity, `ArcanaModel`) + P6 (CI — Jenkins `macos-app-pipeline-mb` on the Mac
-mini agent, arch-qube + SonarQube gates) are done — the package builds + tests green (55 tests)
-with zero concurrency diagnostics. See [`ARCHITECTURE.md`](ARCHITECTURE.md).**
+mini agent, arch-qube + SonarQube gates, **live & green**) are done — the package builds + tests
+green (90 tests) with zero concurrency diagnostics; the CI quality gate passes at 87.7% coverage.
+See [`ARCHITECTURE.md`](ARCHITECTURE.md).**
 
 ## License
 

@@ -14,6 +14,7 @@ DerivedData/
 
 # Coverage
 coverage.lcov
+coverage-report.xml
 *.profraw
 *.profdata
 

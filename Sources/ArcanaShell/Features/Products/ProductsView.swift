@@ -43,6 +43,11 @@ struct ProductsView: View {
                     .tag(product.persistentModelID)
                 }
                 .searchable(text: $search, placement: .sidebar)
+                .onAppear {
+                    if selectedID == nil, ProcessInfo.processInfo.environment["ARCANA_SHOT"] != nil {
+                        selectedID = products.first?.persistentModelID
+                    }
+                }
             }
             .frame(minWidth: 300, idealWidth: 340)
 

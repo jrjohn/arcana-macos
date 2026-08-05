@@ -98,7 +98,15 @@ public final class ShellModel {
 
         try? await manager.activateAll()
         refresh()
-        openTab(viewId: "HomePage", title: "Home", icon: "house")
+
+        // Screenshot mode: open a specific screen so captures can be automated.
+        if let shot = ProcessInfo.processInfo.environment["ARCANA_SHOT"],
+           let item = Self.builtInSidebar.first(where: { $0.id == shot }) {
+            sidebarSelection = item.id
+            openTab(viewId: item.id, title: item.title, icon: item.systemImage)
+        } else {
+            openTab(viewId: "HomePage", title: "Home", icon: "house")
+        }
     }
 
     /// Re-reads the contribution registries into the observable menu state.

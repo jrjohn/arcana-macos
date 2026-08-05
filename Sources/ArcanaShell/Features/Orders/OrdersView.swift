@@ -40,6 +40,11 @@ struct OrdersView: View {
                     OrderRow(order: order).tag(order.persistentModelID)
                 }
                 .listStyle(.inset)
+                .onAppear {
+                    if selectedID == nil, ProcessInfo.processInfo.environment["ARCANA_SHOT"] != nil {
+                        selectedID = orders.first { $0.orderNumber.contains("SAMPLE") }?.persistentModelID ?? orders.first?.persistentModelID
+                    }
+                }
             }
             .frame(minWidth: 320, idealWidth: 360)
 

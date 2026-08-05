@@ -11,21 +11,24 @@ SwiftData — and gated in CI by SonarQube + an architecture-conformance check.
 
 ## 📸 Screens
 
-The desktop shell: a `NavigationSplitView` sidebar, document tabs, a dynamic main menu built from
-plugin contributions, a `MenuBarExtra`, a `Settings` scene, and a status bar.
+Real captures of the running app — a `NavigationSplitView` sidebar, document tabs, a dynamic main
+menu built from plugin contributions, `MenuBarExtra`, a `Settings` scene, and a status bar.
 
-| Screen | What it shows |
-|---|---|
-| **Login** | `admin` / `admin` gate — the shell only appears once authenticated (RBAC session) |
-| **Home** | Landing dashboard |
-| **Orders** | Master-detail: live order list + editable detail (customer/status/payment, add/remove line items, live totals) + **pop-out order windows** |
-| **Customers / Products** | Searchable master-detail editors (all fields, create / edit / soft-delete; product margin + low-stock) |
-| **Users & Roles** | Identity / RBAC admin — assign roles, see effective permissions live (permission-gated) |
-| **Sync** | CRDT sync — advance vector clocks, drain the pending queue, conflict-resolution demo |
-| **Reports** | Dashboard from live data: totals, revenue, orders-by-status chart (Swift Charts), low stock |
-| **Plugins** | Loaded plugins + live state |
+| Sign-in gate (RBAC) | Orders — master-detail |
+|:-:|:-:|
+| ![Login](docs/screen/Login.png) | ![Orders](docs/screen/Orders.png) |
 
-_(PNG captures live under `docs/screen/` when added.)_
+| Customers | Products |
+|:-:|:-:|
+| ![Customers](docs/screen/Customers.png) | ![Products](docs/screen/Products.png) |
+
+| Users & Roles — RBAC admin | Reports |
+|:-:|:-:|
+| ![Users & Roles](docs/screen/Users-Roles.png) | ![Reports](docs/screen/Reports.png) |
+
+| CRDT Sync | Plugins |
+|:-:|:-:|
+| ![Sync](docs/screen/Sync.png) | ![Plugins](docs/screen/Plugins.png) |
 
 ---
 

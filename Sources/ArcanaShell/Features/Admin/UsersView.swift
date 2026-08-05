@@ -30,6 +30,11 @@ struct UsersView: View {
                     }
                     .tag(user.persistentModelID)
                 }
+                .onAppear {
+                    if selectedID == nil, ProcessInfo.processInfo.environment["ARCANA_SHOT"] != nil {
+                        selectedID = users.first?.persistentModelID
+                    }
+                }
             }
             .frame(minWidth: 260, idealWidth: 300)
 

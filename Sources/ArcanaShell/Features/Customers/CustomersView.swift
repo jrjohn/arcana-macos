@@ -39,6 +39,11 @@ struct CustomersView: View {
                     .tag(customer.persistentModelID)
                 }
                 .searchable(text: $search, placement: .sidebar)
+                .onAppear {
+                    if selectedID == nil, ProcessInfo.processInfo.environment["ARCANA_SHOT"] != nil {
+                        selectedID = customers.first?.persistentModelID
+                    }
+                }
             }
             .frame(minWidth: 280, idealWidth: 320)
 

@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import AppKit
+import ArcanaModel
 
 public struct ArcanaShellApp: App {
     @State private var shell: ShellModel
@@ -15,7 +16,14 @@ public struct ArcanaShellApp: App {
     @State private var localization = LocalizationStore()
 
     public init() {
-        _shell = State(initialValue: CompositionRoot.makeShell())
+        let composed = CompositionRoot.makeShell()
+        _shell = State(initialValue: composed)
+        // Screenshot mode: bypass the login gate with a synthetic admin session.
+        if ProcessInfo.processInfo.environment["ARCANA_SHOT"] != nil {
+            composed.currentUser.setCurrentUser(AuthenticatedUser(
+                id: 1, username: "admin", displayName: "Administrator",
+                roles: [SystemRoles.administrator], permissions: Set(SystemPermissions.all)))
+        }
     }
 
     public var body: some Scene {
@@ -31,6 +39,8 @@ public struct ArcanaShellApp: App {
             .environment(shell.currentUser)
             .frame(minWidth: 900, minHeight: 560)
         }
+        .defaultSize(width: 1400, height: 900)
+        .defaultPosition(.topLeading)
         .modelContainer(shell.modelContainer)
         .commands {
             ShellCommands(shell: shell)

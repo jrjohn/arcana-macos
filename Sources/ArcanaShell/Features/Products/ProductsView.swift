@@ -6,6 +6,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 import ArcanaModel
 
 struct ProductsView: View {
@@ -14,6 +15,9 @@ struct ProductsView: View {
     private var products: [Product]
     @State private var selectedID: PersistentIdentifier?
     @State private var search = ""
+    @State private var isExporting = false
+    @Environment(DialogService.self) private var dialogs: DialogService?
+    @Environment(ToastCenter.self) private var toasts: ToastCenter?
 
     private var filtered: [Product] {
         guard !search.isEmpty else { return products }
@@ -25,8 +29,11 @@ struct ProductsView: View {
             VStack(spacing: 0) {
                 HStack {
                     Button { newProduct() } label: { Label("New", systemImage: "plus") }
+                        .keyboardShortcut("n", modifiers: .command)
                     Spacer()
-                    Button(role: .destructive) { deleteSelected() } label: { Image(systemName: "trash") }
+                    Button { isExporting = true } label: { Image(systemName: "square.and.arrow.up") }
+                        .help("Export to CSV")
+                    Button(role: .destructive) { confirmDelete() } label: { Image(systemName: "trash") }
                         .disabled(selectedID == nil)
                 }
                 .padding(8)
@@ -61,6 +68,12 @@ struct ProductsView: View {
             }
             .frame(minWidth: 380, maxWidth: .infinity)
         }
+        .fileExporter(isPresented: $isExporting,
+                      document: CSVDocument(Exporter.productsCSV(products)),
+                      contentType: .commaSeparatedText,
+                      defaultFilename: "products") { result in
+            if case .success = result { toasts?.show("Exported products.csv", systemImage: "square.and.arrow.up") }
+        }
     }
 
     private func newProduct() {
@@ -71,11 +84,21 @@ struct ProductsView: View {
         selectedID = product.persistentModelID
     }
 
-    private func deleteSelected() {
+    private func confirmDelete() {
         guard let id = selectedID, let p = products.first(where: { $0.persistentModelID == id }) else { return }
-        p.isSoftDeleted = true; p.isPendingSync = true
-        try? context.save()
-        selectedID = nil
+        let name = p.name
+        let doDelete: () -> Void = {
+            p.isSoftDeleted = true; p.isPendingSync = true
+            try? context.save()
+            selectedID = nil
+            toasts?.show("Deleted \(name)", systemImage: "trash")
+        }
+        if let dialogs {
+            dialogs.confirm("Delete product?", message: "“\(name)” will be removed.",
+                            confirmTitle: "Delete", destructive: true, action: doDelete)
+        } else {
+            doDelete()
+        }
     }
 }
 

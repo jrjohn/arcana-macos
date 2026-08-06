@@ -112,14 +112,17 @@ Every feature area of the Windows app, with its macOS port status.
 - ❌ MFA, external auth providers
 
 ## G. Cross-cutting UI Services
+- ✅ **Dialogs** — `DialogService` (confirm + error), rendered via `.confirmationDialog` / `.alert`;
+  wired as confirm-delete on Orders / Customers / Products
+- ✅ **Toasts** — `ToastCenter` transient banners on save / delete / export
+- ✅ **File export** — `.fileExporter` + `CSVDocument`; Orders / Customers / Products → CSV
+  (`Exporter` serialization is unit-tested)
+- ✅ **Keyboard shortcuts** — ⌘N (new) per list; plugin menu `Shortcut` strings parsed and bound
+  (`ShellCommands.parseShortcut`, Windows Ctrl → macOS Command; unit-tested)
 - 🟡 Navigation (basic tab nav; no `ShowDialog`, no within-tab nav)
-- ❌ Dialogs (info / warning / error / input / confirm)
-- ❌ File pickers (open / save) — `NSOpenPanel` / `.fileImporter`
-- ❌ Progress dialogs
-- ❌ Plugin-contributed status-bar items
-- ❌ Notifications
-- ❌ Clipboard access
-- ❌ Open-URL / launch external (help docs)
+- 🟡 Notifications (in-app toasts done; native `UNUserNotification` needs a signed bundle — deferred)
+- ❌ File **import** / open panel; progress dialogs; plugin-contributed status-bar items; clipboard;
+  open-URL / launch external
 
 ## H. Packaging / Distribution
 - ✅ SPM executable (`ArcanaMacApp` → `ArcanaShellApp`)
@@ -150,7 +153,7 @@ login + RBAC UI, ArcanaSync wiring, Reports + pop-out)._
 | Desktop shell chrome | ~75% (multi-window/pop-out ✅; MDI nested tabs still missing) |
 | **Feature UI (Customer/Product/Order/Reports)** | **~70%** — real master-detail editors + a Reports dashboard; missing category mgmt, some workflows |
 | Identity/RBAC/Auth | backend ~90% · **UI now real** (login gate + Users/Roles admin + permission gating) |
-| Cross-cutting UI services | ~15% (dialogs/file-pickers/notifications still missing) |
+| Cross-cutting UI services | ~55% (dialogs, toasts, CSV export, keyboard shortcuts done; import/notifications/clipboard pending) |
 | Packaging / signing | ~15% |
 
 ### Done in the #1–#5 pass

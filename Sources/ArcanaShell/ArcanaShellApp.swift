@@ -14,6 +14,8 @@ public struct ArcanaShellApp: App {
     @State private var shell: ShellModel
     @State private var theme = ThemeStore()
     @State private var localization = LocalizationStore()
+    @State private var dialogs = DialogService()
+    @State private var toasts = ToastCenter()
 
     public init() {
         let composed = CompositionRoot.makeShell()
@@ -37,6 +39,9 @@ public struct ArcanaShellApp: App {
                 }
             }
             .environment(shell.currentUser)
+            .environment(dialogs)
+            .environment(toasts)
+            .shellUIServices(dialogs, toasts)
             .frame(minWidth: 900, minHeight: 560)
         }
         .defaultSize(width: 1400, height: 900)
@@ -89,14 +94,42 @@ struct ShellCommands: Commands {
         AnyView(
             ForEach(nodes) { node in
                 if node.isLeaf {
-                    Button(node.item.title) {
-                        if let command = node.item.command { shell.runCommand(command) }
-                    }
+                    leafButton(node)
                 } else {
                     Menu(node.item.title) { menuContent(node.children) }
                 }
             }
         )
+    }
+
+    @ViewBuilder
+    private func leafButton(_ node: MenuNode) -> some View {
+        let button = Button(node.item.title) {
+            if let command = node.item.command { shell.runCommand(command) }
+        }
+        if let shortcut = node.item.shortcut, let keys = Self.parseShortcut(shortcut) {
+            button.keyboardShortcut(keys)
+        } else {
+            button
+        }
+    }
+
+    /// Parses a menu `Shortcut` string ("Ctrl+Shift+O", "Cmd+N") into a SwiftUI shortcut.
+    /// Windows `Ctrl` maps to the macOS Command key.
+    static func parseShortcut(_ string: String) -> KeyboardShortcut? {
+        let parts = string.split(separator: "+").map { $0.trimmingCharacters(in: .whitespaces) }
+        guard let keyPart = parts.last, let character = keyPart.lowercased().first else { return nil }
+        var modifiers: EventModifiers = []
+        for part in parts.dropLast() {
+            switch part.lowercased() {
+            case "cmd", "command", "ctrl", "control", "⌘": modifiers.insert(.command)
+            case "shift", "⇧": modifiers.insert(.shift)
+            case "alt", "option", "opt", "⌥": modifiers.insert(.option)
+            default: break
+            }
+        }
+        if modifiers.isEmpty { modifiers = [.command] }
+        return KeyboardShortcut(KeyEquivalent(character), modifiers: modifiers)
     }
 }
 

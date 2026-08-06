@@ -6,6 +6,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 import ArcanaModel
 
 struct CustomersView: View {
@@ -14,6 +15,9 @@ struct CustomersView: View {
     private var customers: [Customer]
     @State private var selectedID: PersistentIdentifier?
     @State private var search = ""
+    @State private var isExporting = false
+    @Environment(DialogService.self) private var dialogs: DialogService?
+    @Environment(ToastCenter.self) private var toasts: ToastCenter?
 
     private var filtered: [Customer] {
         guard !search.isEmpty else { return customers }
@@ -25,8 +29,11 @@ struct CustomersView: View {
             VStack(spacing: 0) {
                 HStack {
                     Button { newCustomer() } label: { Label("New", systemImage: "plus") }
+                        .keyboardShortcut("n", modifiers: .command)
                     Spacer()
-                    Button(role: .destructive) { deleteSelected() } label: { Image(systemName: "trash") }
+                    Button { isExporting = true } label: { Image(systemName: "square.and.arrow.up") }
+                        .help("Export to CSV")
+                    Button(role: .destructive) { confirmDelete() } label: { Image(systemName: "trash") }
                         .disabled(selectedID == nil)
                 }
                 .padding(8)
@@ -57,6 +64,12 @@ struct CustomersView: View {
             }
             .frame(minWidth: 380, maxWidth: .infinity)
         }
+        .fileExporter(isPresented: $isExporting,
+                      document: CSVDocument(Exporter.customersCSV(customers)),
+                      contentType: .commaSeparatedText,
+                      defaultFilename: "customers") { result in
+            if case .success = result { toasts?.show("Exported customers.csv", systemImage: "square.and.arrow.up") }
+        }
     }
 
     private func newCustomer() {
@@ -67,11 +80,21 @@ struct CustomersView: View {
         selectedID = customer.persistentModelID
     }
 
-    private func deleteSelected() {
+    private func confirmDelete() {
         guard let id = selectedID, let c = customers.first(where: { $0.persistentModelID == id }) else { return }
-        c.isSoftDeleted = true; c.isPendingSync = true
-        try? context.save()
-        selectedID = nil
+        let name = c.name
+        let doDelete: () -> Void = {
+            c.isSoftDeleted = true; c.isPendingSync = true
+            try? context.save()
+            selectedID = nil
+            toasts?.show("Deleted \(name)", systemImage: "trash")
+        }
+        if let dialogs {
+            dialogs.confirm("Delete customer?", message: "“\(name)” will be removed.",
+                            confirmTitle: "Delete", destructive: true, action: doDelete)
+        } else {
+            doDelete()
+        }
     }
 }
 

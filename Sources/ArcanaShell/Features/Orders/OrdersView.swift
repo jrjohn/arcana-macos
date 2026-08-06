@@ -6,6 +6,7 @@
 
 import SwiftUI
 import SwiftData
+import UniformTypeIdentifiers
 import ArcanaModel
 
 // MARK: - Master (list) + detail split
@@ -16,6 +17,9 @@ struct OrdersView: View {
            sort: \Order.orderDate, order: .reverse)
     private var orders: [Order]
     @State private var selectedID: PersistentIdentifier?
+    @State private var isExporting = false
+    @Environment(DialogService.self) private var dialogs: DialogService?
+    @Environment(ToastCenter.self) private var toasts: ToastCenter?
 
     var body: some View {
         HSplitView {
@@ -26,9 +30,12 @@ struct OrdersView: View {
                     } label: {
                         Label("New Order", systemImage: "plus")
                     }
+                    .keyboardShortcut("n", modifiers: .command)
                     Spacer()
+                    Button { isExporting = true } label: { Image(systemName: "square.and.arrow.up") }
+                        .help("Export to CSV")
                     Button(role: .destructive) {
-                        deleteSelected()
+                        confirmDelete()
                     } label: {
                         Image(systemName: "trash")
                     }
@@ -59,6 +66,12 @@ struct OrdersView: View {
             }
             .frame(minWidth: 420, maxWidth: .infinity)
         }
+        .fileExporter(isPresented: $isExporting,
+                      document: CSVDocument(Exporter.ordersCSV(orders)),
+                      contentType: .commaSeparatedText,
+                      defaultFilename: "orders") { result in
+            if case .success = result { toasts?.show("Exported orders.csv", systemImage: "square.and.arrow.up") }
+        }
     }
 
     private func newOrder() {
@@ -75,12 +88,22 @@ struct OrdersView: View {
         }
     }
 
-    private func deleteSelected() {
+    private func confirmDelete() {
         guard let id = selectedID, let order = orders.first(where: { $0.persistentModelID == id }) else { return }
-        order.isSoftDeleted = true
-        order.isPendingSync = true
-        try? context.save()
-        selectedID = nil
+        let number = order.orderNumber
+        let doDelete: () -> Void = {
+            order.isSoftDeleted = true
+            order.isPendingSync = true
+            try? context.save()
+            selectedID = nil
+            toasts?.show("Deleted \(number)", systemImage: "trash")
+        }
+        if let dialogs {
+            dialogs.confirm("Delete order?", message: "“\(number)” will be removed.",
+                            confirmTitle: "Delete", destructive: true, action: doDelete)
+        } else {
+            doDelete()
+        }
     }
 }
 

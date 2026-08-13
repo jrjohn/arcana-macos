@@ -8,7 +8,6 @@ pipeline {
 
     environment {
         SQ_URL   = 'http://sonarqube:9000/sonarqube'
-        SQ_TOKEN = 'squ_5ce2319b9d8ca2b1db4e0f5bdf36b34249561f18'
     }
 
     options {
@@ -48,7 +47,8 @@ pipeline {
                 // Docker-outside-of-Docker: the Jenkins container's /var/jenkins_home is bind-
                 // mounted from the host at /opt/arcana-state/jenkins-home, so the daemon needs
                 // the HOST path for the volume mount, not the in-container ${WORKSPACE}.
-                sh '''
+                withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SQ_TOKEN')]) {
+                    sh '''
                     HOST_WS=$(printf '%s' "${WORKSPACE}" | sed 's#^/var/jenkins_home#/opt/arcana-state/jenkins-home#')
                     docker run --rm \
                         --network devops_default \
@@ -65,6 +65,7 @@ pipeline {
                         -Dsonar.scm.disabled=true \
                         -Dsonar.qualitygate.wait=true
                 '''
+                }
             }
         }
     }

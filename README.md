@@ -3,6 +3,19 @@
 A **Local-First, Plugin-Everything macOS desktop application** — the Swift 6 / SwiftUI port of
 [`arcana-windows`](https://github.com/jrjohn/arcana-windows) (WinUI 3 / .NET 10).
 
+[![Swift](https://img.shields.io/badge/Swift-6.0-F05138.svg?logo=swift&logoColor=white)](https://swift.org/)
+[![macOS](https://img.shields.io/badge/macOS-15%2B-000000.svg?logo=apple&logoColor=white)](https://www.apple.com/macos/)
+[![SwiftUI](https://img.shields.io/badge/UI-SwiftUI%20%2B%20SwiftData-0055FF.svg?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
+[![Tests](https://img.shields.io/badge/Tests-101%20Passing-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/Coverage-84.8%25-brightgreen.svg)]()
+[![arch-qube](https://img.shields.io/badge/arch--qube-PASS-brightgreen.svg)]()
+
+<p>
+  <a href="https://arcana.boo/sonarqube/dashboard?id=arcana-macos"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
+  <a href="https://arcana.boo/jenkins/job/macos-app-pipeline-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+  <img src="https://img.shields.io/badge/Arch_Gate-PASS-brightgreen?style=for-the-badge" alt="Architecture Gate">
+</p>
+
 Faithful architecture port: the CRDT sync engine, the VS Code-style plugin system, the desktop
 shell, and the domain / identity / auth layers are all carried across to Swift 6, SwiftUI, and
 SwiftData — and gated in CI by SonarQube + an architecture-conformance check.

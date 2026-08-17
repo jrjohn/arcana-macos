@@ -9,12 +9,21 @@ A **Local-First, Plugin-Everything macOS desktop application** — the Swift 6 /
 [![Tests](https://img.shields.io/badge/Tests-101%20Passing-brightgreen.svg)]()
 [![Coverage](https://img.shields.io/badge/Coverage-84.8%25-brightgreen.svg)]()
 [![arch-qube](https://img.shields.io/badge/arch--qube-PASS-brightgreen.svg)]()
+[![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐%208.4%2F10-gold.svg)](#-architecture-evaluation)
 
-<p>
+<!-- agent-managed badges START -->
+<p align="center">
   <a href="https://arcana.boo/sonarqube/dashboard?id=arcana-macos"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
   <a href="https://arcana.boo/jenkins/job/macos-app-pipeline-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+</p>
+<!-- agent-managed badges END -->
+<!-- arch-rank START -->
+<p align="center">
+  <img src="https://img.shields.io/badge/arch--qube-100%2F100-blue?style=for-the-badge" alt="arch-qube">
+  <img src="https://img.shields.io/badge/Grade-A---brightgreen?style=for-the-badge" alt="Grade">
   <img src="https://img.shields.io/badge/Arch_Gate-PASS-brightgreen?style=for-the-badge" alt="Architecture Gate">
 </p>
+<!-- arch-rank END -->
 
 Faithful architecture port: the CRDT sync engine, the VS Code-style plugin system, the desktop
 shell, and the domain / identity / auth layers are all carried across to Swift 6, SwiftUI, and

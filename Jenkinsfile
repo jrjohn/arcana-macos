@@ -11,7 +11,12 @@ pipeline {
     }
 
     options {
-        timeout(time: 40, unit: 'MINUTES')
+        // Backstop only. A pipeline-level timeout also counts time spent QUEUED for an executor,
+        // so a PR that waited on a busy built-in node was ABORTED with every check green
+        // (PR #5, 2026-10-02: build/test/arch-qube passed, then 40 min ran out waiting for the
+        // Sonar stage's executor). Real limits are per stage, inside `steps`, so they count
+        // execution only — same fix as arcana-ios.
+        timeout(time: 8, unit: 'HOURS')
         disableConcurrentBuilds()
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
@@ -20,6 +25,7 @@ pipeline {
         stage('Build · Test · arch-qube') {
             agent { label 'macmini' }
             steps {
+              timeout(time: 30, unit: 'MINUTES') {
                 checkout scm
                 sh 'swift --version'
                 sh 'swift build'
@@ -33,12 +39,14 @@ pipeline {
                       name: 'sonar-inputs', allowEmpty: true
                 archiveArtifacts artifacts: 'coverage.lcov,coverage-report.xml',
                       allowEmptyArchive: true, fingerprint: true
+              }
             }
         }
 
         stage('SonarQube analysis + Quality Gate') {
             agent { label 'built-in' }
             steps {
+              timeout(time: 20, unit: 'MINUTES') {
                 unstash 'sonar-inputs'
                 // Official scanner image on the devops_default network. `qualitygate.wait`
                 // makes the scanner block on the gate and fail the build if it is red — no
@@ -66,6 +74,7 @@ pipeline {
                         -Dsonar.qualitygate.wait=true
                 '''
                 }
+              }
             }
         }
     }

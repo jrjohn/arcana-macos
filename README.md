@@ -70,7 +70,7 @@ sync transport, not foundations.
 - ✅ **RBAC + auth** — PBKDF2-SHA256, HMAC tokens in Keychain, permission resolver, real login + admin UI
 - ✅ **Native shell** — `NavigationSplitView`, document tabs, dynamic menu, multi-window pop-out
 - ✅ **Architecture gate** — `arch-qube` enforces module dependency direction (100%, 0 violations)
-- ✅ **95 tests**, **SonarQube quality gate green at 87.5%** on the Mac mini CI agent
+- ✅ **101 tests**, **SonarQube quality gate green at 86.4%** on the Mac mini CI agent
 
 ### 📊 Detailed Ratings
 
@@ -78,13 +78,13 @@ sync transport, not foundations.
 |---|---|---|---|
 | **Clean Architecture** | 9.0 | A | Strict module layering, machine-enforced by `arch-qube` (0 violations) |
 | **Modern Stack** | 9.5 | A+ | Swift 6 `.v6`, SwiftUI, SwiftData, CryptoKit, Swift Charts, Swift Testing |
-| **CI / Quality Gates** | 9.0 | A | Jenkins on Mac mini, arch-qube 100%, SonarQube 87.5%, live & green |
+| **CI / Quality Gates** | 9.0 | A | Jenkins on Mac mini, arch-qube 100%, SonarQube 86.4%, live & green |
 | **CRDT Sync Engine** | 8.5 | A− | 5 CRDT types ported + wired to live data; **remote transport pending** |
 | **Security / RBAC** | 8.5 | A− | PBKDF2 (100k), HMAC + Keychain, role-union/deny resolver, real login + admin |
 | **Data Patterns** | 8.5 | A− | SwiftData `@Model`s, services, soft-delete, sync marking (no explicit UoW) |
 | **Plugin System** | 8.0 | A− | Contracts + runtime + manager ported; **no dynamic load / management UI** |
 | **Desktop Shell** | 8.0 | A− | Split-view + tabs + dynamic menu + pop-out windows; **no MDI nested tabs** |
-| **Testing** | 8.5 | A− | 95 tests, 87.5% on tested modules, CI-gated (fewer than Windows' 507) |
+| **Testing** | 8.5 | A− | 101 tests, 86.4% on tested modules, CI-gated (fewer than Windows' 507) |
 | **MVVM Pattern** | 7.5 | B+ | Idiomatic SwiftUI `@Observable`; Input/Output/Effect partially applied |
 | **Navigation** | 7.0 | B | Tab nav + command→bus routing; no full type-safe NavGraph yet |
 | **Feature UI Breadth** | 7.0 | B | Real master-detail (Orders/Customers/Products) + Reports; ~70% overall |
@@ -160,7 +160,7 @@ ArcanaPlugins ────────────► ArcanaPluginContracts
 | Persistence | EF Core 10 (SQLite) | **SwiftData** |
 | Crypto | `Rfc2898DeriveBytes`, HMACSHA256 | **CommonCrypto (PBKDF2)** + **CryptoKit (HMAC)** + **Keychain** |
 | Charts | — | **Swift Charts** |
-| Tests | xUnit (507) | **Swift Testing** (95) |
+| Tests | xUnit (507) | **Swift Testing** (101) |
 | CI | Jenkins | **Jenkins `macos-app-pipeline-mb`** (Mac mini agent) + SonarQube + arch-qube |
 
 Requires Xcode 26+ / Swift 6.x, macOS 15+.
@@ -171,7 +171,7 @@ Requires Xcode 26+ / Swift 6.x, macOS 15+.
 
 ```bash
 swift build              # compile (Swift 6 strict concurrency)
-swift test               # 95 tests (Swift Testing)
+swift test               # 101 tests (Swift Testing)
 swift run ArcanaMacApp   # launch the shell (dev)
 ```
 
@@ -184,9 +184,9 @@ and an order are seeded so the screens have content.
 
 The pipeline runs on the Mac mini agent (SwiftUI/SwiftData need a real macOS toolchain):
 
-- **Build + 95 tests** green
+- **Build + 101 tests** green
 - **arch-qube**: architecture-conformance gate — **0 violations (100%)**, with a self-test proving it isn't blind
-- **SonarQube quality gate**: **PASSED** — coverage **87.5%** (≥ 80), reliability / security / maintainability **A / A / A**
+- **SonarQube quality gate**: **PASSED** — coverage **86.4%** (≥ 80), reliability / security / maintainability **A / A / A**
 
 See [`Jenkinsfile`](Jenkinsfile), [`sonar-project.properties`](sonar-project.properties),
 [`docs/PORT_STATUS.md`](docs/PORT_STATUS.md), and [`docs/FEATURE_CHECKLIST.md`](docs/FEATURE_CHECKLIST.md).

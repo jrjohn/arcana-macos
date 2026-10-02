@@ -7,7 +7,7 @@ A **Local-First, Plugin-Everything macOS desktop application** — the Swift 6 /
 [![macOS](https://img.shields.io/badge/macOS-15%2B-000000.svg?logo=apple&logoColor=white)](https://www.apple.com/macos/)
 [![SwiftUI](https://img.shields.io/badge/UI-SwiftUI%20%2B%20SwiftData-0055FF.svg?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
 [![Tests](https://img.shields.io/badge/Tests-101%20Passing-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/Coverage-84.8%25-brightgreen.svg)]()
+[![Coverage](https://img.shields.io/badge/Coverage-86.4%25-brightgreen.svg)]()
 [![arch-qube](https://img.shields.io/badge/arch--qube-PASS-brightgreen.svg)]()
 [![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐%208.4%2F10-gold.svg)](#-architecture-evaluation)
 

@@ -3,25 +3,25 @@
 A **Local-First, Plugin-Everything macOS desktop application** — the Swift 6 / SwiftUI port of
 [`arcana-windows`](https://github.com/jrjohn/arcana-windows) (WinUI 3 / .NET 10).
 
-[![Swift](https://img.shields.io/badge/Swift-6.0-F05138.svg?logo=swift&logoColor=white)](https://swift.org/)
-[![macOS](https://img.shields.io/badge/macOS-15%2B-000000.svg?logo=apple&logoColor=white)](https://www.apple.com/macos/)
-[![SwiftUI](https://img.shields.io/badge/UI-SwiftUI%20%2B%20SwiftData-0055FF.svg?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
-[![Tests](https://img.shields.io/badge/Tests-101%20Passing-brightgreen.svg)]()
-[![Coverage](https://img.shields.io/badge/Coverage-86.4%25-brightgreen.svg)]()
-[![arch-qube](https://img.shields.io/badge/arch--qube-PASS-brightgreen.svg)]()
-[![Architecture Rating](https://img.shields.io/badge/Architecture%20Rating-⭐⭐⭐⭐%208.4%2F10-gold.svg)](#-architecture-evaluation)
+[![Swift](.github/badges/swift-6-0-f05138-svg-7e3fd00c.svg)](https://swift.org/)
+[![macOS](.github/badges/macos-15-000000-svg-95aca854.svg)](https://www.apple.com/macos/)
+[![SwiftUI](.github/badges/ui-swiftui-swiftdata-0055ff-svg-e181f0d6.svg)](https://developer.apple.com/xcode/swiftui/)
+[![Tests](.github/badges/tests-101-passing-brightgreen-svg-50bdd57c.svg)]()
+[![Coverage](.github/badges/coverage-86-4-brightgreen-svg-eeb28e79.svg)]()
+[![arch-qube](.github/badges/arch-qube-pass-brightgreen-svg-dafcc04a.svg)]()
+[![Architecture Rating](.github/badges/architecture-rating-8-4-10-gold-svg-d213e66e.svg)](#-architecture-evaluation)
 
 <!-- agent-managed badges START -->
 <p align="center">
-  <a href="https://arcana.boo/sonarqube/dashboard?id=arcana-macos"><img src="https://img.shields.io/badge/Quality_Gate-OK-brightgreen?style=for-the-badge" alt="Quality Gate"></a>
-  <a href="https://arcana.boo/jenkins/job/macos-app-pipeline-mb/job/main/"><img src="https://img.shields.io/badge/Build-passing-brightgreen?style=for-the-badge" alt="Build"></a>
+  <a href="https://arcana.boo/sonarqube/dashboard?id=arcana-macos"><img src=".github/badges/quality-gate-ok-brightgreen-7365c32e.svg" alt="Quality Gate"></a>
+  <a href="https://arcana.boo/jenkins/job/macos-app-pipeline-mb/job/main/"><img src=".github/badges/build-passing-brightgreen-f2a434e1.svg" alt="Build"></a>
 </p>
 <!-- agent-managed badges END -->
 <!-- arch-rank START -->
 <p align="center">
-  <img src="https://img.shields.io/badge/arch--qube-100%2F100-blue?style=for-the-badge" alt="arch-qube">
-  <img src="https://img.shields.io/badge/Grade-A---brightgreen?style=for-the-badge" alt="Grade">
-  <img src="https://img.shields.io/badge/Arch_Gate-PASS-brightgreen?style=for-the-badge" alt="Architecture Gate">
+  <img src=".github/badges/arch-qube-100-100-blue-2f391344.svg" alt="arch-qube">
+  <img src=".github/badges/grade-a-brightgreen-321fc253.svg" alt="Grade">
+  <img src=".github/badges/arch-gate-pass-brightgreen-887cab17.svg" alt="Architecture Gate">
 </p>
 <!-- arch-rank END -->
 

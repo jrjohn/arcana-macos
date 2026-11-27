@@ -97,7 +97,7 @@ sync transport, not foundations.
   dependency direction can't rot.
 - **Genuinely native** — SwiftUI/AppKit shell, SwiftData persistence, CryptoKit/Keychain, Swift
   Charts; no cross-platform shims on the product path.
-- **Honest, gated quality** — SonarQube 87.5% coverage over the tested modules; ratings A/A/A.
+- **Honest, gated quality** — SonarQube 86.4% coverage over the tested modules; ratings A/A/A.
 
 ### ❌ Gaps (largest remaining) — see [`docs/FEATURE_CHECKLIST.md`](docs/FEATURE_CHECKLIST.md)
 | Area | Gap |
